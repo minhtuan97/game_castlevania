@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -154,10 +154,13 @@
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="Scence.cpp" />
+    <ClCompile Include="Simon.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Textures.cpp" />
+    <ClCompile Include="Torch.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Whip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
@@ -172,10 +175,13 @@
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Simon.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="Textures.h" />
+    <ClInclude Include="Torch.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="Whip.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

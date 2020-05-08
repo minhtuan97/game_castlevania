@@ -147,6 +147,10 @@ void Mario::Render()
 
 	int alpha = 255;
 	if (untouchable) alpha = 128;
+	if (state == MARIO_STATE_JUMP)
+	{
+		ani = 1;
+	}
 	animation_set->at(ani)->Render(x, y, alpha);
 	//animations[ani]->Render(x, y, alpha);
 

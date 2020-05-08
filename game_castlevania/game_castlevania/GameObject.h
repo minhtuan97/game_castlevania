@@ -48,8 +48,8 @@ public:
 
 	float dx, dy;
 
-	float vx;
-	float vy;
+	float vx=0;
+	float vy=0;
 
 	int nx;
 	int state;

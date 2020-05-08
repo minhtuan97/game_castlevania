@@ -33,3 +33,19 @@ void Animation::Render(float x, float y, int alpha)
 
 	frames[currentFrame]->GetSprite()->Draw(x, y, alpha);
 }
+
+void Animation::RenderFrame(float x, float y, int frame, int alpha)
+{
+	if (frame != -1)
+		frames[frame]->GetSprite()->Draw(x, y, alpha);
+}
+
+int Animation::GetcurrenFrame()
+{
+	return currentFrame;
+}
+
+void Animation::SetCurrenFrame(int currenframe)
+{
+	currentFrame = currenframe;
+}

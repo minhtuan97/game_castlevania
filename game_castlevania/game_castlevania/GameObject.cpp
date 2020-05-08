@@ -1,6 +1,8 @@
 ﻿#include "GameObject.h"
 #include "Game.h"
 #include <typeinfo>
+#include "Torch.h"
+#include "Utils.h"
 
 
 GameObject::GameObject()
@@ -57,10 +59,17 @@ void GameObject::CalcPotentialCollisions(
 {
 	for (UINT i = 0; i < coObjects->size(); i++)
 	{
+		//if(dynamic_cast<Torch*>(coObjects->at(i)))
+			//DebugOut(L"Object Torch\n");
+
 		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
 		//DebugOut(L"xuat t: %f \n", e->t);
 		if (e->t > 0 && e->t <= 1.0f)
+		{
 			coEvents.push_back(e);//lấy t kiểm tra va chạm
+			if(dynamic_cast<Torch*>(e->obj))
+			DebugOut(L"co va cham Object Torch, vi tri roi: %f %f\n",x,y);
+		}
 		else
 			delete e;// xóa e đi nếu t ko va chạm
 	}

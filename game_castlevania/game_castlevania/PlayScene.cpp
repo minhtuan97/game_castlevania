@@ -7,6 +7,7 @@
 #include "Textures.h"
 #include "Sprites.h"
 #include "Portal.h"
+#include "Torch.h"
 
 using namespace std;
 
@@ -145,28 +146,29 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	switch (object_type)
 	{
-	case OBJECT_TYPE_MARIO:
-		if (player != NULL)
+	case 4:
+		if (player2 != NULL)
 		{
-			DebugOut(L"[ERROR] MARIO object was created before!\n");
+			DebugOut(L"[ERROR] PLAYER2 object was created before!\n");
 			return;
 		}
-		obj = new Mario(x, y);
-		player = (Mario*)obj;
+		obj = new Simon(x, y);
+		player2 = (Simon*)obj;
 
-		DebugOut(L"[INFO] Player object created!\n");
+		DebugOut(L"[INFO] Player2 object created!\n");
 		break;
-	case OBJECT_TYPE_GOOMBA: obj = new Goomba(); break;
+	case 2: obj = new Torch(); break;
 	case OBJECT_TYPE_BRICK: obj = new Brick(); break;
+	case 3: obj = new Whip(); break;
 	//case OBJECT_TYPE_KOOPAS: obj = new Koopas(); break;
-	case OBJECT_TYPE_PORTAL:
+	/*case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
 		float b = atof(tokens[5].c_str());
 		int scene_id = atoi(tokens[6].c_str());
 		obj = new Portal(x, y, r, b, scene_id);
 	}
-	break;
+	break;*/
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -186,21 +188,6 @@ void CPlayScene::_ParseSection_MAP(string line)
 	vector<string> tokens = split(line);
 
 	if (tokens.size() < 2) return; // skip invalid lines
-
-	//int TotalTiles = atoi(tokens[0].c_str());
-	//int RowMap = atoi(tokens[1].c_str());
-	//int ColumnMap = atoi(tokens[2].c_str());
-	//int RowTile = atoi(tokens[3].c_str());
-	//int ColumnTile = atoi(tokens[4].c_str());
-
-	//LPDIRECT3DTEXTURE9 tex = Textures::GetInstance()->Get(texID);
-	//if (tex == NULL)
-	//{
-	//	DebugOut(L"[ERROR] Texture ID %d not found!\n", texID);
-	//	return;
-	//}
-
-	//Sprites::GetInstance()->Add(ID, l, t, r, b, tex);
 
 	LPCWSTR pathMap = ToLPCWSTR(tokens[1].c_str());
 	map = new Map(pathMap);
@@ -272,6 +259,7 @@ void CPlayScene::Update(DWORD dt)
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
+		if(dynamic_cast<Whip*>(objects[i])==false)
 		coObjects.push_back(objects[i]);
 	}
 
@@ -281,11 +269,11 @@ void CPlayScene::Update(DWORD dt)
 	}
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
-	if (player == NULL) return;
+	if (player2 == NULL) return;
 
 	// Update camera to follow mario
 	float cx, cy;
-	player->GetPosition(cx, cy);
+	player2->GetPosition(cx, cy);
 
 	Game* game = Game::GetInstance();
 	cx -= game->GetScreenWidth() / 2;
@@ -296,9 +284,13 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
-	for (int i = 0; i < objects.size(); i++)
-		objects[i]->Render();
 	map->DrawMap();
+
+	for (int i = 0; i < objects.size()&& dynamic_cast<Whip*>(objects[i])==false; i++)
+		objects[i]->Render();
+	/*for (int i = 0; i < objects.size(); i++)
+		objects[i]->Render();*/
+
 }
 
 /*
@@ -310,23 +302,40 @@ void CPlayScene::Unload()
 		delete objects[i];
 
 	objects.clear();
-	player = NULL;
+	//player = NULL;
+	player2 = NULL;
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
+}
+
+void CPlayScene::GetWhip()
+{
+	for (UINT i = 0; i < objects.size(); i++)
+	{
+		LPGAMEOBJECT e = objects[i];
+
+		if (dynamic_cast<Whip*>(e)) // if e là whip 
+			GetPlayer2()->SetWhip((Whip*)e) ;
+	}
 }
 
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 
-	Mario* mario = ((CPlayScene*)scence)->GetPlayer();
+	Simon* simon = ((CPlayScene*)scence)->GetPlayer2();
+	((CPlayScene*)scence)->GetWhip();
+
 	switch (KeyCode)
 	{
-	case DIK_SPACE:
-		mario->SetState(MARIO_STATE_JUMP);
-		break;
+	/*case DIK_SPACE:
+		simon->Jump();
+		break;*/
 	case DIK_A:
-		mario->Reset();
+		simon->Reset();
+		break;
+	case DIK_Z:
+		simon->Standing();
 		break;
 	}
 }
@@ -334,14 +343,19 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 void CPlayScenceKeyHandler::KeyState(BYTE* states)
 {
 	Game* game = Game::GetInstance();
-	Mario* mario = ((CPlayScene*)scence)->GetPlayer();
-
+	Simon* simon = ((CPlayScene*)scence)->GetPlayer2();
 	// disable control key when Mario die 
-	if (mario->GetState() == MARIO_STATE_DIE) return;
+	//if (mario->GetState() == MARIO_STATE_DIE) return;
 	if (game->IsKeyDown(DIK_RIGHT))
-		mario->SetState(MARIO_STATE_WALKING_RIGHT);
+	{
+		simon->SetState(SIMON_STATE_WALK_RIGHT);
+	}
 	else if (game->IsKeyDown(DIK_LEFT))
-		mario->SetState(MARIO_STATE_WALKING_LEFT);
+	{
+		simon->SetState(SIMON_STATE_WALK_LEFT);
+	}
 	else
-		mario->SetState(MARIO_STATE_IDLE);
+	{
+		simon->Idle();
+	}
 }

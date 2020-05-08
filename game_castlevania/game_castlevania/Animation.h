@@ -32,7 +32,10 @@ public:
 
 	Animation(int defaultTime=100) { this->defaultTime = defaultTime; lastFrameTime = -1; currentFrame = -1; }
 	void Add(int spriteId, DWORD time = 0);
-	void Render(float x, float y, int alpha= 255);
+	void Render(float x, float y, int alpha = 255);
+	void RenderFrame(float x, float y, int frame, int alpha = 255);
+	int GetcurrenFrame();
+	void SetCurrenFrame(int currenframe);
 };
 
 typedef Animation* LPANIMATION;

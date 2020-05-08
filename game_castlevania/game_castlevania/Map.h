@@ -12,8 +12,6 @@
 #define ID_TEX_MAP1 50
 class Map
 {
-	Textures* _texture;
-	Sprites* _sprites;
 	int ColumnTile;
 	int RowTile;
 	int TotalTiles;
@@ -24,10 +22,7 @@ class Map
 public:
 	Map(LPCWSTR filename);
 	void LoadMap(int idTextureMap);
-	//void ReadMapTXT(char* filename);
 	void DrawMap();
-	//int GetMapWidth();
-	//int GetMapHeight();
 
 	~Map();
 };

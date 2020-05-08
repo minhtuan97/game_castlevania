@@ -7,15 +7,17 @@
 #include "Mario.h"
 #include "Goomba.h"
 #include "Map.h"
-//#include "Koopas.h"
+#include "Simon.h"
+#include "Torch.h"
+#include "Whip.h"
 
 
 class CPlayScene : public CScene
 {
 protected:
 	Map* map;
-	Mario* player;					// A play scene has to have player, right? 
-
+	//Mario* player;					// A play scene has to have player, right? 
+	Simon* player2;
 	vector<LPGAMEOBJECT> objects;
 
 	void _ParseSection_TEXTURES(string line);
@@ -34,8 +36,9 @@ public:
 	virtual void Render();
 	virtual void Unload();
 
-	Mario* GetPlayer() { return player; }
-
+	//Mario* GetPlayer() { return player; }
+	Simon* GetPlayer2() { return player2; }
+	void GetWhip();
 	//friend class CPlayScenceKeyHandler;
 };
 

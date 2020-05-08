@@ -30,8 +30,8 @@ WARNING: This example contains a hell LOT of *sinful* programming practices
 #define MAIN_WINDOW_TITLE L"04 - Collision"
 
 #define BACKGROUND_COLOR D3DCOLOR_XRGB(255, 255, 200)
-#define SCREEN_WIDTH 528
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 300
+#define SCREEN_HEIGHT 230
 
 #define MAX_FRAME_RATE 120
 
@@ -320,10 +320,6 @@ void Render()
 		d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
 
 		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
-
-		//for (int i = 0; i < objects.size(); i++)
-		//	objects[i]->Render();
-		////map1->DrawMap();
 		Game::GetInstance()->GetCurrentScene()->Render();
 		spriteHandler->End();
 		d3ddv->EndScene();
@@ -420,7 +416,6 @@ int Run()
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	HWND hWnd = CreateGameWindow(hInstance, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT);
-	//InitDirectX(hWnd);
 	game = Game::GetInstance();
 	game->Init(hWnd);
 	game->InitKeyboard();
