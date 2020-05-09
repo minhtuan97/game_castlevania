@@ -123,38 +123,6 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 
-	//vector<LPCOLLISIONEVENT> coEvents2;
-	//vector<LPCOLLISIONEVENT> coEventsResult2;
-
-	//if (whip == NULL)
-	//	return;
-	//coEvents2.clear();
-	////coEventsResult2.clear();
-	//float x, y;
-	//whip->GetPosition(x, y);
-	//DebugOut(L"whip x: %f, whip y: %f\n", x,y);
-	//whip->CalcPotentialCollisions(colliable_objects, coEvents2);
-	////DebugOut(L"coevents2.size=: %d\n", coEvents2.size());
-	//if (coEvents2.size() != 0)
-
-	//{
-	//	DebugOut(L"coevents2.size=: %d\n", coEvents2.size());
-
-	//	float min_tx_whip, min_ty_whip, nx_whip = 0, ny_whip;
-
-	//	whip->FilterCollision(coEvents2, coEventsResult2, min_tx_whip, min_ty_whip, nx_whip, ny_whip);
-
-	//	//Collision logic with brick
-	//	for (UINT i = 0; i < coEventsResult2.size(); i++)
-	//	{
-	//		LPCOLLISIONEVENT e = coEventsResult2[i];
-
-	//		if (dynamic_cast<Torch*>(e->obj)) // if e->obj is Goomba 
-	//			DebugOut(L"co va cham voi lua\n");
-	//	}
-	//}
-	//colliable_objects->size()
-
 }
 
 void Simon::Render()
