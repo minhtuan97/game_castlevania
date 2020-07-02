@@ -1,4 +1,6 @@
 #include "Whip.h"
+#include "Candle.h"
+#include "Grid.h"
 
 
 void Whip::Render()
@@ -11,56 +13,35 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 {
 
 	GameObject::Update(dt);
-
-	// Simple fall down
-	vy += 0.002*dt;
-	vx += 0.002*dt;;
-	vector<LPCOLLISIONEVENT> coEvents;
-	vector<LPCOLLISIONEVENT> coEventsResult;
-
-	coEvents.clear();
-	CalcPotentialCollisions(colliable_objects, coEvents);
-	//DebugOut(L"coevents.size=: %d\n", coEvents.size());
-	//DebugOut(L"x:%f y:%f\n", x,y);
-	//DebugOut(L"torch->animation_set->at(0)->GetcurrenFrame()==%d\n", torch->animation_set->at(0)->GetcurrenFrame());
-
-	if (coEvents.size() == 0)
+	for (UINT i = 0; i < colliable_objects->size(); i++)
 	{
-	}
-	else
-	{
-		float min_tx, min_ty, nxa = 0, nya;
-
-		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nxa, nya);
-
-		int sumtorch = -1;
-		 //Collision logic with brick
-		for (UINT i = 0; i < coEventsResult.size(); i++)
+		float l1, t1, r1, b1, l2, t2, r2, b2;
+		GetBoundingBox(l1, t1, r1, b1);
+		colliable_objects->at(i)->GetBoundingBox(l2, t2, r2, b2);
+		//if (dynamic_cast<Torch*>(colliable_objects->at(i)))
+			//DebugOut(L"whip: ml:%f,mt:%f,mr:%f,\mb:%f torch: l:%f,t:%f,r:%f,b:%f \n", l1, t1, r1, b1, l2, t2, r2, b2);
+		if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
 		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<Torch*>(e->obj))
+			if (dynamic_cast<Torch*>(colliable_objects->at(i)))
 			{
-				//DebugOut(L"Co va cham Torch\n");
-				sumtorch++;
-				//delete e->obj
-				Torch* torch = dynamic_cast<Torch*>(e->obj);
-				DebugOut(L"which->animation_set->at(0)->GetcurrenFrame()==%d, nx=%d\n", animation_set->at(0)->GetcurrenFrame(),nx);
-				DebugOut(L"which->animation_set->at(1)->GetcurrenFrame()==%d, nx=%d\n",animation_set->at(1)->GetcurrenFrame(),nx);
-				
-				if (nx < 0 && animation_set->at(0)->GetcurrenFrame() == 2)torch->SetColi(true);
-				if (nx > 0 && animation_set->at(1)->GetcurrenFrame() == 2)torch->SetColi(true);
-				//if (animation_set->at(1)->GetcurrenFrame() == 2)torch->SetColi(true);
-				//if (animation_set->at(0)->GetcurrenFrame() == 2)torch->SetColi(true);
+				Torch* torch = dynamic_cast<Torch*>(colliable_objects->at(i));
+				if (animation_set->at(0)->GetcurrenFrame() == 2)torch->SetColi(true);
+				if (animation_set->at(1)->GetcurrenFrame() == 2)torch->SetColi(true);
+				//DebugOut(L"Co va cham voi lua tai vi tri x:%f,y%f\n",torch->x,torch->y);
 
 			}
+			else
+				if (dynamic_cast<Candle*>(colliable_objects->at(i)))
+				{
+					Candle* candle = dynamic_cast<Candle*>(colliable_objects->at(i));
+					if (animation_set->at(0)->GetcurrenFrame() == 2)candle->SetColi(true);
+					if (animation_set->at(1)->GetcurrenFrame() == 2)candle->SetColi(true);
+					//DebugOut(L"Co va cham voi lua tai vi tri x:%f,y%f\n",torch->x,torch->y);
 
+				}
 		}
-		DebugOut(L"So luong Torch va cham: %d\n",sumtorch);
 
 	}
-
-	// clean up collision events
-	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
 void Whip::Render(int level,int nx, int frame, int alpha)
@@ -82,13 +63,13 @@ void Whip::Render(int level,int nx, int frame, int alpha)
 	default:
 		break;
 	}
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void Whip::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
 	l = x;
 	t = y;
-	r = x + 12;
+	r = x + 24;
 	b = y + 16;
 }

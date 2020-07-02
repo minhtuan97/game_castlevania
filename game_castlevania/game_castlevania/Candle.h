@@ -1,9 +1,8 @@
 #pragma once
 #include "GameObject.h"
 
-class Torch: public GameObject 
+class Candle:public GameObject
 {
-	
 public:
 	int ID_Item;
 	bool isColi = false;

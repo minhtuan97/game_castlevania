@@ -4,21 +4,28 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "Brick.h"
-#include "Mario.h"
-#include "Goomba.h"
 #include "Map.h"
 #include "Simon.h"
 #include "Torch.h"
 #include "Whip.h"
-
+#include "Camera.h"
+#include "Grid.h"
+#include "Item.h"
 
 class CPlayScene : public CScene
 {
 protected:
 	Map* map;
+	Grid* grid;
 	//Mario* player;					// A play scene has to have player, right? 
 	Simon* player2;
+	Camera* camera;
+	Whip* whip;
 	vector<LPGAMEOBJECT> objects;
+	
+	vector<LPGAMEOBJECT> objects_item;
+
+
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);

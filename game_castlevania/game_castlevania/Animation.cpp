@@ -49,3 +49,8 @@ void Animation::SetCurrenFrame(int currenframe)
 {
 	currentFrame = currenframe;
 }
+
+int Animation::size()
+{
+	return frames.size();
+}

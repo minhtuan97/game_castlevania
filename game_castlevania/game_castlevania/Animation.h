@@ -36,6 +36,7 @@ public:
 	void RenderFrame(float x, float y, int frame, int alpha = 255);
 	int GetcurrenFrame();
 	void SetCurrenFrame(int currenframe);
+	int size();
 };
 
 typedef Animation* LPANIMATION;

@@ -1,7 +1,15 @@
 #include "Map.h"
 #include "Utils.h"
+#include "Camera.h"
+#include "define.h"
 
-Map::Map(LPCWSTR filename)
+Map* Map::_instance = NULL;
+
+Map::Map()
+{
+}
+
+void Map::LoadFile(LPCWSTR filename)
 {
 	ifstream inp(filename, ios::in);
 	inp >> TotalTiles >> RowMap >> ColumnMap >> RowTile >> ColumnTile >> widthTile >> heightTile;
@@ -12,7 +20,6 @@ Map::Map(LPCWSTR filename)
 			//DebugOut(L"xuat : %d", TileMap[i][j]);
 		}
 	inp.close();
-	DebugOut(L"xuat : %d %d %d %d %d \n", TotalTiles, RowMap, ColumnMap, RowTile, ColumnTile);
 }
 
 void Map::LoadMap(int idTextureMap)
@@ -32,14 +39,45 @@ void Map::LoadMap(int idTextureMap)
 
 void Map::DrawMap()
 {
+	Camera* cam = Camera::GetInstance();
+	int tile_column = (int) SCREEN_WIDTH / widthTile+2;
+	int tile_row = RowTile;
+	float mx, my;
+	mx = cam->GetCameraPosition().x;
+	//my = cam->GetCameraPosition().y;
+	int tile_start_column = (int)mx / widthTile;
+	//int tile_start_row = (int)my / widthTile;
 	Sprites* sprites = Sprites::GetInstance();
 	int a = -1;
+	DebugOut(L"bat dau\n");
 	for (int i = 0; i < RowMap; i++)
+		//for (int j = tile_start_column; j < tile_column+ tile_start_column; j++)
 		for (int j = 0; j < ColumnMap; j++)
 		{
+			
 			a = TileMap[i][j];
-			sprites->Get(50000 +a)->Draw(j * widthTile, i * heightTile);
-		}		
+			if(a>=0)
+				sprites->Get(50000 + a)->Draw(j * widthTile, i * heightTile);
+			if (a == 55)DebugOut(L"%d	%d\n", j * widthTile, i * heightTile);
+		}
+	DebugOut(L"bhet\n");
+
+}
+
+float Map::GetHeight()
+{
+	return heightTile* RowMap;
+}
+
+float Map::GetWidth()
+{
+	return widthTile * ColumnMap;
+}
+
+Map* Map::GetInstance()
+{
+	if (_instance == NULL) _instance = new Map();
+	return _instance;
 }
 
 Map::~Map()

@@ -51,13 +51,16 @@ void Game::Init(HWND hWnd)
 	// Initialize sprite helper from Direct3DX helper library
 	D3DXCreateSprite(d3ddv, &spriteHandler);
 
+	camera = Camera::GetInstance();
+	//camera->Setwidthheight(screen_width, screen_height);
 	OutputDebugString(L"[INFO] InitGame done;\n");
 }
 
 void Game::Draw(float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha)
 {
-	D3DXVECTOR3 p(floor(x - cam_x), floor(y - cam_y), 0);
+	//D3DXVECTOR3 p(floor(x - cam_x), floor(y - cam_y), 0);
 	//D3DXVECTOR3 p(x, y, 0);
+	D3DXVECTOR3 p = camera->GetPositionInCamera(D3DXVECTOR3(x, y, 0));
 	RECT r;
 	r.left = left;
 	r.top = top;
@@ -194,6 +197,16 @@ Game* Game::GetInstance()
 {
 	if (_instance == NULL) _instance = new Game();
 	return _instance;
+}
+
+bool Game::AABB(float ml, float mt, float mr, float mb, float sl, float st, float sr, float sb)
+{
+
+	if (mt <= sb && mb >= st && ml <= sr && mr >= sl)
+	{
+		return true;
+	}
+	return false;
 }
 
 void Game::SweptAABB(

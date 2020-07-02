@@ -19,19 +19,18 @@ WARNING: This example contains a hell LOT of *sinful* programming practices
 
 #include "Game.h"
 #include "GameObject.h"
-#include "Mario.h"
 #include "Textures.h"
-#include "Goomba.h"
 #include "Brick.h"
 #include <typeinfo>
 #include "Map.h"
+#include "define.h"
 
 #define WINDOW_CLASS_NAME L"SampleWindow"
 #define MAIN_WINDOW_TITLE L"04 - Collision"
 
-#define BACKGROUND_COLOR D3DCOLOR_XRGB(255, 255, 200)
-#define SCREEN_WIDTH 300
-#define SCREEN_HEIGHT 230
+#define BACKGROUND_COLOR D3DCOLOR_XRGB(0, 40, 100)
+//#define SCREEN_WIDTH 300
+//#define SCREEN_HEIGHT 250
 
 #define MAX_FRAME_RATE 120
 

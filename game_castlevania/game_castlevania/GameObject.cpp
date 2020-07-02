@@ -67,8 +67,8 @@ void GameObject::CalcPotentialCollisions(
 		if (e->t > 0 && e->t <= 1.0f)
 		{
 			coEvents.push_back(e);//lấy t kiểm tra va chạm
-			if(dynamic_cast<Torch*>(e->obj))
-			DebugOut(L"co va cham Object Torch, vi tri roi: %f %f\n",x,y);
+			//if(dynamic_cast<Torch*>(e->obj))
+			//DebugOut(L"co va cham Object Torch, vi tri roi: %f %f\n",x,y);
 		}
 		else
 			delete e;// xóa e đi nếu t ko va chạm
@@ -135,7 +135,7 @@ void GameObject::RenderBoundingBox()
 	rect.right = (int)r - (int)l;
 	rect.bottom = (int)b - (int)t;
 
-	Game::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 32);
+	Game::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, rect.right, rect.bottom, 111);
 }
 
 

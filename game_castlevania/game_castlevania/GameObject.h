@@ -43,6 +43,7 @@ struct CollisionEvent
 class GameObject
 {
 public:
+	int ID;
 	float x;
 	float y;
 

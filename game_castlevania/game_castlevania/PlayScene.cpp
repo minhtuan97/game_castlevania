@@ -8,6 +8,12 @@
 #include "Sprites.h"
 #include "Portal.h"
 #include "Torch.h"
+#include "define.h"
+#include "StairTop.h"
+#include "StairBot.h"
+#include "Bat.h"
+#include "Knight.h"
+#include "Candle.h"
 
 using namespace std;
 
@@ -15,6 +21,8 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
 {
 	key_handler = new CPlayScenceKeyHandler(this);
+	map = Map::GetInstance();
+	camera = Camera::GetInstance();
 }
 
 /*
@@ -132,13 +140,14 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
 
-	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
+	if (tokens.size() < 4) return; // skip invalid lines - an object set must have at least id, x, y
 
-	int object_type = atoi(tokens[0].c_str());
-	float x = atof(tokens[1].c_str());
-	float y = atof(tokens[2].c_str());
+	int ID = atoi(tokens[0].c_str());
+	int object_type = atoi(tokens[1].c_str());
+	float x = atof(tokens[2].c_str());
+	float y = atof(tokens[3].c_str());
 
-	int ani_set_id = atoi(tokens[3].c_str());
+	int ani_set_id = atoi(tokens[4].c_str());
 
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
 
@@ -152,23 +161,97 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			DebugOut(L"[ERROR] PLAYER2 object was created before!\n");
 			return;
 		}
-		obj = new Simon(x, y);
+		//obj = new Simon(x, y);
+		obj = Simon::GetInstance();
+		//player2 = Simon::GetInstance();
 		player2 = (Simon*)obj;
-
 		DebugOut(L"[INFO] Player2 object created!\n");
 		break;
-	case 2: obj = new Torch(); break;
-	case OBJECT_TYPE_BRICK: obj = new Brick(); break;
-	case 3: obj = new Whip(); break;
-	//case OBJECT_TYPE_KOOPAS: obj = new Koopas(); break;
-	/*case OBJECT_TYPE_PORTAL:
+	case 2: 
+		obj = new Torch(); 
+		Torch* torch;
+		torch = NULL;
+		torch = (Torch*)obj;
+		torch->ID_Item= (int)atof(tokens[5].c_str());
+		break;
+	case OBJECT_TYPE_BRICK: 
+		obj = new Brick(); break;
+	case 3: 
+		obj = new Whip();
+		whip = (Whip*)obj;
+		player2->SetWhip(whip);
+		break;
+	case 5:
 	{
-		float r = atof(tokens[4].c_str());
-		float b = atof(tokens[5].c_str());
-		int scene_id = atoi(tokens[6].c_str());
-		obj = new Portal(x, y, r, b, scene_id);
+		obj = new Item();
+		Item* item = NULL;
+		item = (Item*)obj;
+		item->Settype((int)atof(tokens[5].c_str()));
+		obj->SetPosition(x, y);
+		obj->ID = ID;
+		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+		obj->SetAnimationSet(ani_set);
+		objects_item.push_back(obj);
+		if(item->GetTypeItem()!=3)
+			return;
+		break;
 	}
-	break;*/
+	case 6:
+	{
+		obj = new StairTop();
+		StairTop* item = NULL;
+		item = (StairTop*)obj;
+		item->nx=(int)atof(tokens[5].c_str());
+		break;
+	}
+	case 7:
+	{
+		obj = new StairBot();
+		StairBot* item = NULL;
+		item = (StairBot*)obj;
+		item->nx = (int)atof(tokens[5].c_str());
+		
+		break;
+	}
+	case 8:
+	{
+		obj = new Bat(x,y);
+		float l = atof(tokens[5].c_str());
+		float r = atof(tokens[6].c_str());
+		float t = atof(tokens[7].c_str());
+		float b = atof(tokens[8].c_str());
+		Bat* bat = (Bat*)obj;
+		bat->left_max = l;
+		bat->right_max = r;
+		bat->top_max = t;
+		bat->bot_max = b;
+		break;
+	}
+	case 9:
+	{
+		obj = new Knight(x, y);
+		float l = atof(tokens[5].c_str());
+		float r = atof(tokens[6].c_str());
+		Knight* knight = (Knight*)obj;
+		knight->left_max = l;
+		knight->right_max = r;
+		break;
+	}
+	case 10:
+		obj = new Candle();
+		Candle* candle;
+		candle = NULL;
+		candle = (Candle*)obj;
+		candle->ID_Item = (int)atof(tokens[5].c_str());
+		break;
+	case OBJECT_TYPE_PORTAL:
+	{
+		float r = atof(tokens[5].c_str());
+		float b = atof(tokens[6].c_str());
+		int scene_id = atoi(tokens[7].c_str());
+		obj = new Portal(x, y, r, b, scene_id);
+		break;
+	}	
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -176,11 +259,16 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	// General object setup
 	obj->SetPosition(x, y);
-
-	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-
-	obj->SetAnimationSet(ani_set);
+	obj->ID = ID;
+	if (ani_set_id != -1)
+	{
+		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+		obj->SetAnimationSet(ani_set);
+	}
 	objects.push_back(obj);
+	grid = Grid::GetInstance();
+	if(obj!=NULL&& !dynamic_cast<Simon*>(obj))
+		grid->addObject(obj);
 }
 
 void CPlayScene::_ParseSection_MAP(string line)
@@ -190,7 +278,7 @@ void CPlayScene::_ParseSection_MAP(string line)
 	if (tokens.size() < 2) return; // skip invalid lines
 
 	LPCWSTR pathMap = ToLPCWSTR(tokens[1].c_str());
-	map = new Map(pathMap);
+	map->LoadFile(pathMap);
 	map->LoadMap(atoi(tokens[0].c_str()));
 }
 
@@ -255,41 +343,148 @@ void CPlayScene::Update(DWORD dt)
 {
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way 
-
+	
+	grid->GetListOfObjects(&objects);
+	
+	vector<LPGAMEOBJECT> coObjects2;
 	vector<LPGAMEOBJECT> coObjects;
-	for (size_t i = 1; i < objects.size(); i++)
-	{
-		if(dynamic_cast<Whip*>(objects[i])==false)
-		coObjects.push_back(objects[i]);
-	}
+	vector<LPGAMEOBJECT> listTorch;
+	vector<LPGAMEOBJECT> listCandle;
+	vector<LPGAMEOBJECT> listItem;
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
-		objects[i]->Update(dt, &coObjects);
+		if (dynamic_cast<Torch*>(objects[i]))
+			listTorch.push_back(objects[i]);
+		else
+			if (dynamic_cast<Candle*>(objects[i]))
+				listCandle.push_back(objects[i]);
+			else
+			{
+				coObjects.push_back(objects[i]);
+			if (dynamic_cast<Item*>(objects[i]))
+				listItem.push_back(objects[i]);
+			else
+				{
+				coObjects2.push_back(objects[i]);
+				}
+			}
 	}
+	player2->Update(dt, &coObjects);
+		
+	whip->Update(dt, &listTorch);
+	whip->Update(dt, &listCandle);
+
+	for (int i = 0; i < listTorch.size(); i++)
+	{
+		Torch* a = dynamic_cast<Torch*>(listTorch[i]);
+		a->Update(dt, &objects_item);
+		/*if(a->isColi)
+		{
+			listTorch[i]->Update(dt, &objects_item);
+		}*/
+	}
+	for (int i = 0; i < listCandle.size(); i++)
+	{
+		Candle* a = dynamic_cast<Candle*>(listCandle[i]);
+		a->Update(dt, &objects_item);
+		/*if (a->isColi)
+		{
+			listCandle[i]->Update(dt, &objects_item);
+		}*/
+	}
+
+	for (size_t i = 0; i < coObjects2.size(); i++)
+	{
+		coObjects2[i]->Update(dt, &coObjects2);
+	}
+
+	for (size_t i = 0; i < listItem.size(); i++)
+	{
+		listItem[i]->Update(dt, &coObjects2);
+	}
+
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player2 == NULL) return;
 
 	// Update camera to follow mario
-	float cx, cy;
+	float cx, cy, mapheight, mapwidth;
+	mapheight = map->GetHeight();
+	mapwidth = map->GetWidth();
 	player2->GetPosition(cx, cy);
+	//DebugOut(L"vi tri simon: %f,%f\n", cx,cy);
 
-	Game* game = Game::GetInstance();
-	cx -= game->GetScreenWidth() / 2;
-	cy -= game->GetScreenHeight() / 2;
+	//Game* game = Game::GetInstance();
+	//cx -= game->GetScreenWidth() / 2;
+	//cy -= game->GetScreenHeight() / 2;
+	D3DXVECTOR3 pos = camera->GetCameraPosition();
+	if (mapwidth > SCREEN_WIDTH ) {
+		if (cx  + 5 < SCREEN_WIDTH / 2) {
+			cx = pos.x;
+		}
+		else if (cx + SCREEN_WIDTH / 2 > mapwidth - 1) {
+			cx = mapwidth - SCREEN_WIDTH;
+		}
+		else {
+			cx = cx + 5 + SCREEN_WIDTH / 2 - SCREEN_WIDTH;
+		}
+	}
+	else {
+		cx = 0;
+	}
 
-	Game::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
+	if (mapheight > SCREEN_HEIGHT)
+	{
+		if (cy < mapheight - SCREEN_HEIGHT / 2) {
+			cy = cy - SCREEN_HEIGHT / 2;
+		}
+		else {
+			cy = mapheight - SCREEN_HEIGHT;
+		}
+	}
+	else {
+		cy = mapheight > SCREEN_HEIGHT;
+	}
+	camera->SetCameraPosition((int)cx, (int)cy);
+
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		if (dynamic_cast<Torch*>(objects[i]))
+		{
+			Torch* torch = dynamic_cast<Torch*>(objects[i]);
+			if(torch->isColi==true)
+			//Grid* grid = Grid::GetInstance();
+				grid->deleteObject(objects[i]);
+		}
+		else if (dynamic_cast<Candle*>(objects[i]))
+		{
+			Candle* candle = dynamic_cast<Candle*>(objects[i]);
+			if (candle->isColi == true)
+				//Grid* grid = Grid::GetInstance();
+				grid->deleteObject(objects[i]);
+		}
+	}
 }
 
 void CPlayScene::Render()
 {
 	map->DrawMap();
-
-	for (int i = 0; i < objects.size()&& dynamic_cast<Whip*>(objects[i])==false; i++)
-		objects[i]->Render();
-	/*for (int i = 0; i < objects.size(); i++)
-		objects[i]->Render();*/
+	player2->Render();
+	//grid->GetListOfObjects(&objects);
+	//for (int i = 0; i < objects.size() && dynamic_cast<Whip*>(objects[i]) == false; i++) {
+	//	if (dynamic_cast<Torch*>(objects[i]))
+	//		DebugOut(L"ve lua");
+	//	objects[i]->Render();
+	//	/*if (dynamic_cast<Torch*>(objects[i]))
+	//		DebugOut(L"co ne \n");*/
+	//}
+	grid->GetListOfObjects(&objects);
+	for (int i = 0; i < objects.size(); i++)
+	{
+		if(dynamic_cast<Whip*>(objects[i]) == false)
+			objects[i]->Render();
+	}
 
 }
 
@@ -324,18 +519,22 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 
 	Simon* simon = ((CPlayScene*)scence)->GetPlayer2();
-	((CPlayScene*)scence)->GetWhip();
+	Game* game = Game::GetInstance();
+	//((CPlayScene*)scence)->GetWhip();
 
 	switch (KeyCode)
 	{
-	/*case DIK_SPACE:
+	case DIK_X:
 		simon->Jump();
-		break;*/
+		break;
 	case DIK_A:
 		simon->Reset();
 		break;
 	case DIK_Z:
 		simon->Standing();
+		break;
+	case DIK_ESCAPE:
+		DestroyWindow(game->getHwnd());
 		break;
 	}
 }
@@ -356,6 +555,42 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	}
 	else
 	{
-		simon->Idle();
+		//if (simon->isOnStair)
+			//simon->IdleOnStair();
+		//else
+		if(!simon->isOnStair)
+			simon->Idle();
+		
+	}
+	if (game->IsKeyDown(DIK_DOWN))
+	{
+		if (simon->canClimbDownStair)
+		{
+			simon->StairDown();
+			
+		}
+		else 
+		{
+			if (simon->isOnStair)
+				simon->StairDown();
+			else
+				simon->Idle();
+		}
+	}
+	else if (game->IsKeyDown(DIK_UP))
+	{
+		if (simon->canClimbUpStair)
+		{
+			simon->StairUp();
+		}
+		else
+		{
+			if (simon->isOnStair) {
+				simon->StairUp();
+			}
+			else {
+				simon->Idle();
+			}
+		}
 	}
 }

@@ -18,11 +18,15 @@ class Map
 	int widthTile, heightTile;
 	int ColumnMap, RowMap;
 	int TileMap[500][500];
-
+	static Map* _instance;
 public:
-	Map(LPCWSTR filename);
+	Map();
+	void LoadFile(LPCWSTR filename);
 	void LoadMap(int idTextureMap);
 	void DrawMap();
+	float GetHeight();
+	float GetWidth();
+	static Map* GetInstance();
 
 	~Map();
 };
