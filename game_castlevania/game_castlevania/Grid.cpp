@@ -49,9 +49,9 @@ void Grid::addObject(LPGAMEOBJECT object)
 
 	cells[cell_x][cell_y].add(object);
 
-	DebugOut(L"cell_x: %d, cell_y: %d\n", cell_x, cell_y);
-	if (dynamic_cast<Torch*>(object))
-		DebugOut(L"object duoc add x:%f, y:%f \n", object->x, object->y);
+	//DebugOut(L"cell_x: %d, cell_y: %d\n", cell_x, cell_y);
+	//if (dynamic_cast<Torch*>(object))
+		//DebugOut(L"object duoc add x:%f, y:%f \n", object->x, object->y);
 
 
 
@@ -97,6 +97,8 @@ void Grid::GetListOfObjects(vector<LPGAMEOBJECT>* list_object)
 
 void Grid::ClearObject()
 {
+	if (this == NULL)
+		return;
 	for (int i = 0; i < cell_cloumn; i++)
 		for (int j = 0; j < cell_row; j++)
 			cells[i][j].Unload();
@@ -104,8 +106,40 @@ void Grid::ClearObject()
 
 void Grid::deleteObject(LPGAMEOBJECT object)
 {
-	int cell_x = floor((float)object->x / cellwidth);
-	int cell_y = floor((float)object->y / cellheight);
+	int cell_x = 0, cell_y = 0;
+	if (dynamic_cast<Item*>(object))
+	{
+		Item* item = dynamic_cast<Item*>(object);
+		cell_x = floor(item->x_de / cellwidth);
+		cell_y = floor(item->y_de / cellheight);
+	}
+	else
+	{
+		cell_x = floor((float)object->x / cellwidth);
+		cell_y = floor((float)object->y / cellheight);
+	}
 	cells[cell_x][cell_y].earseObj(object);
 
+}
+
+void Grid::Update(LPGAMEOBJECT object)
+{
+	for (int i = 0; i < cell_cloumn; i++)
+		for (int j = 0; j < cell_row; j++)
+		{
+			for (int k = 0; k < cells[i][j].GetlistObject().size(); k++)
+			{
+				LPGAMEOBJECT e;
+				e = cells[i][j].GetlistObject().at(k);
+				int cell_x = floor((float)object->x / cellwidth);
+				int cell_y = floor((float)object->y / cellheight);
+				if (e == object && (cell_x != i || cell_y != j))
+				{
+					cells[i][j].earseObj(object);
+					addObject(object);
+					DebugOut(L"da update grid cho object\n");
+					return;
+				}
+			}
+		}
 }

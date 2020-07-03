@@ -187,6 +187,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		Item* item = NULL;
 		item = (Item*)obj;
 		item->Settype((int)atof(tokens[5].c_str()));
+		item->x_de = x;
+		item->y_de = y;
 		obj->SetPosition(x, y);
 		obj->ID = ID;
 		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
@@ -370,7 +372,6 @@ void CPlayScene::Update(DWORD dt)
 				}
 			}
 	}
-	player2->Update(dt, &coObjects);
 		
 	whip->Update(dt, &listTorch);
 	whip->Update(dt, &listCandle);
@@ -379,19 +380,11 @@ void CPlayScene::Update(DWORD dt)
 	{
 		Torch* a = dynamic_cast<Torch*>(listTorch[i]);
 		a->Update(dt, &objects_item);
-		/*if(a->isColi)
-		{
-			listTorch[i]->Update(dt, &objects_item);
-		}*/
 	}
 	for (int i = 0; i < listCandle.size(); i++)
 	{
 		Candle* a = dynamic_cast<Candle*>(listCandle[i]);
 		a->Update(dt, &objects_item);
-		/*if (a->isColi)
-		{
-			listCandle[i]->Update(dt, &objects_item);
-		}*/
 	}
 
 	for (size_t i = 0; i < coObjects2.size(); i++)
@@ -403,6 +396,7 @@ void CPlayScene::Update(DWORD dt)
 	{
 		listItem[i]->Update(dt, &coObjects2);
 	}
+	player2->Update(dt, &coObjects);
 
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
@@ -499,7 +493,8 @@ void CPlayScene::Unload()
 	objects.clear();
 	//player = NULL;
 	player2 = NULL;
-
+	whip = NULL;
+	grid->ClearObject();
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 

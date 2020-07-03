@@ -12,11 +12,11 @@
 #define ID_TEX_MAP1 50
 class Map
 {
-	int ColumnTile;
-	int RowTile;
-	int TotalTiles;
-	int widthTile, heightTile;
-	int ColumnMap, RowMap;
+	int ColumnTile=0;
+	int RowTile=0;
+	int TotalTiles=0;
+	int widthTile=0, heightTile=0;
+	int ColumnMap=0, RowMap=0;
 	int TileMap[500][500];
 	static Map* _instance;
 public:

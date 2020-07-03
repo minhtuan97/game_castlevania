@@ -6,6 +6,7 @@ class Item: public GameObject
 public:
 	bool isEnable;
 	bool isfinish;
+	int x_de, y_de;
 	Item();
 	//Item(int typeItem);
 	~Item();

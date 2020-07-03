@@ -9,6 +9,8 @@
 #include "StairBot.h"
 #include "StairTop.h"
 #include <cmath>
+#include "Bat.h"
+#include "Knight.h"
 
 Simon* Simon::__instance = NULL;
 
@@ -39,7 +41,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		vx = 0;
 	// Calculate dx, dy 
 	GameObject::Update(dt);
-	if (isStanding||isWhip) dx = dy = 0;
+	if (isStanding||isWhip) dx =  0;
 	if (x < 0)	x = 0;
 	Map* map = Map::GetInstance();
 	if (x > map->GetWidth()-44) 
@@ -96,9 +98,9 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				{
 					canClimbDownStair = true;
 					xStair = st->x + 3;
-					yStair = st->y + 3;
+					yStair = st->y;
 					direcStair = st->nx;
-					DebugOut(L"vao ham va cham voi top isOnStair=%d, isDownStair=%d, canClimbDownStair=%d\n", isOnStair, isDownStair, canClimbDownStair);
+					//DebugOut(L"vao ham va cham voi top isOnStair=%d, isDownStair=%d, canClimbDownStair=%d\n", isOnStair, isDownStair, canClimbDownStair);
 				}
 				else
 					if (isUpStair) {
@@ -138,6 +140,32 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 						canClimbDownStair = false;
 					}
 				
+			}
+		}
+		if (dynamic_cast<Knight*>(colliable_objects->at(i)))
+		{
+			Knight* knight = dynamic_cast<Knight*>(colliable_objects->at(i));
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			knight->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(knight);
+			}
+		}
+		if (dynamic_cast<Bat*>(colliable_objects->at(i)))
+		{
+			Bat* bat = dynamic_cast<Bat*>(colliable_objects->at(i));
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			bat->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(bat);
 			}
 		}
 	}
@@ -237,7 +265,6 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		/*else
 			isJump = true;*/
 
-		 //Collision logic with brick
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
@@ -248,16 +275,13 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				isJump = false;
 				if (isDownStair)
 				{
-					//x -= 8;
+					//x -= 10;
 					y += 8;
 				}
 			}
-			else 
-				if (dynamic_cast<Portal*>(e->obj))
-					{
-						Portal* p = dynamic_cast<Portal*>(e->obj);
-						Game::GetInstance()->SwitchScene(p->GetSceneId());
-					}
+			
+			
+			
 		}
 		//Collision logic with item
 		for (UINT i = 0; i < coEventsResult.size(); i++)
@@ -278,42 +302,14 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				grid->deleteObject(e->obj);
 				
 			}
+			if (dynamic_cast<Portal*>(e->obj))
+			{
+				Portal* p = dynamic_cast<Portal*>(e->obj);
+				Game::GetInstance()->SwitchScene(p->GetSceneId());
+			}
+					
 		}
-		// Collision logic with Goombas
-		//for (UINT i = 0; i < coEventsResult.size(); i++)
-		//{
-		//	LPCOLLISIONEVENT e = coEventsResult[i];
-
-		//	if (dynamic_cast<Goomba*>(e->obj)) // if e->obj is Goomba 
-		//	{
-		//		Goomba* goomba = dynamic_cast<Goomba*>(e->obj);
-
-		//		// jump on top >> kill Goomba and deflect a bit 
-		//		if (e->ny < 0)
-		//		{
-		//			if (goomba->GetState() != GOOMBA_STATE_DIE)
-		//			{
-		//				goomba->SetState(GOOMBA_STATE_DIE);
-		//				vy = -MARIO_JUMP_DEFLECT_SPEED;
-		//			}
-		//		}
-		//		else if (e->nx != 0)
-		//		{
-		//			if (untouchable == 0)
-		//			{
-		//				if (goomba->GetState() != GOOMBA_STATE_DIE)
-		//				{
-		//					if (level > MARIO_LEVEL_SMALL)
-		//					{
-		//						level = MARIO_LEVEL_SMALL;
-		//						StartUntouchable();
-		//					}
-		//					else
-		//						SetState(MARIO_STATE_DIE);
-		//				}
-		//			}
-		//		}
-		//	}
+		
 		//	// if Portal 
 		//	else if (dynamic_cast<Portal*>(e->obj))
 		//	{
@@ -425,18 +421,18 @@ void Simon::Render()
 				{
 					float l, t, r, b;
 					GetBoundingBox(l, t, r, b);
-					if (nx > 0)
+					if (nx_stair > 0)
 						whip->SetPosition(l - 10, t);
 					else
 						whip->SetPosition(r, t);
 					if (currentframe == 2)
 					{
-						if (nx > 0)
+						if (nx_stair > 0)
 							whip->SetPosition(r, t);
 						else
 							whip->SetPosition(l - 24, t);
 					}
-					whip->Render(1, nx, currentframe, alpha);
+					whip->Render(1, nx_stair, currentframe, alpha);
 				}
 			}
 		}
@@ -480,6 +476,7 @@ void Simon::Render()
 			if (currentframe > 2)
 			{
 				isStanding = false;
+				whip->SetPosition(-10, -10);
 				animation_set->at(ani)->SetCurrenFrame(-1);
 				if (nx > 0)
 					ani = SIMON_ANI_IDLE_RIGHT;
@@ -584,12 +581,12 @@ void Simon::SetState(int state)
 	case SIMON_STATE_INTRO:
 		vx = 0;
 	case SIMON_STATE_STANDING_LEFT:
-		vx = vy = 0;
+		vx = 0;
 		nx = -1;
 		isStanding = true;
 		break;
 	case SIMON_STATE_STANDING_RIGHT:
-		vx = vy = 0;
+		vx =0;
 		nx = 1;
 		isStanding = true;
 		break;
@@ -638,10 +635,10 @@ void Simon::Standing()
 		isWhip = true;
 	else
 	{
-		if (nx > 0)
-			SetState(SIMON_STATE_STANDING_RIGHT);
-		else
-			SetState(SIMON_STATE_STANDING_LEFT);
+			if (nx > 0)
+				SetState(SIMON_STATE_STANDING_RIGHT);
+			else
+				SetState(SIMON_STATE_STANDING_LEFT);
 	}
 }
 
@@ -665,13 +662,14 @@ void Simon::Reset()
 
 void Simon::StairDown()
 {
-	if (!isDownStair)
+	/*if (!isDownStair)
 	{
 		if (isUpStair)
 			nx_stair = -direcStair;
 		else
 			nx_stair = direcStair;
-	}
+	}*/
+	nx_stair = -direcStair;
 	isOnStair = true;
 	isUpStair = false;
 	isDownStair = true;
@@ -684,11 +682,12 @@ void Simon::StairDown()
 
 void Simon::StairUp()
 {
-	if (!isUpStair)
-		if (isDownStair)
-			nx_stair = -direcStair;
-		else
-			nx_stair = direcStair;
+	//if (!isUpStair)
+		//if (isDownStair)
+			//nx_stair = -direcStair;
+		//else
+			//nx_stair = direcStair;
+	nx_stair = direcStair;
 	isOnStair = true;
 	isUpStair = true;
 	isDownStair = false;

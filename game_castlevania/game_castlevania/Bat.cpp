@@ -1,5 +1,7 @@
 ﻿#include "Bat.h"
 #include "Simon.h"
+#include "Grid.h"
+#include "Map.h"
 
 Bat::Bat(float x, float y)
 {
@@ -33,6 +35,8 @@ void Bat::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	{
 		vx = 0.03f;
 		vy = 0.02;
+		if (y_de == NULL)
+			y_de = simonY;
 	}
 	if (y<simonY + 10 && y>simonY - 10)
 	{
@@ -43,8 +47,16 @@ void Bat::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	
 	GameObject::Update(dt); // Update dt, dx, dy
 	//DebugOut(L"vx=%f,vy=%f,dx:%f, dy:%f\n", vx,vy,dx,dy);
-		y += dy;
+	y += dy;
 	x += dx;
+	if (y > y_de + 42) y = y_de + 42;
+	if (y < 1) y = 1;
+	Grid* grid = Grid::GetInstance();
+	Map* map = Map::GetInstance();
+	if (x > map->GetWidth() - 10)
+		grid->deleteObject(this);
+	else
+		grid->Update(this);
 
 }
 

@@ -6,6 +6,7 @@ class Bat:public GameObject
 
 	float start_x;
 	float start_y;
+	float y_de = NULL;
 	
 public:
 	bool isIdle;
