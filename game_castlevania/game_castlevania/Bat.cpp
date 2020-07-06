@@ -17,7 +17,7 @@ void Bat::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	float simonX=0, simonY=0;
 
 	Simon::GetInstance()->GetPosition(simonX, simonY);
-	DebugOut(L"simonX:%f, simonY:%f, x:%f, y:%f, left_max=%f, right_max=%f, top_max=%f, bot_max=%f\n", simonX, simonY, x, y, left_max, right_max, top_max, bot_max);
+	//DebugOut(L"simonX:%f, simonY:%f, x:%f, y:%f, left_max=%f, right_max=%f, top_max=%f, bot_max=%f\n", simonX, simonY, x, y, left_max, right_max, top_max, bot_max);
 
 	/*if (y - simonY >= -20)
 	{
@@ -63,7 +63,7 @@ void Bat::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 void Bat::Render()
 {
 	animation_set->at(0)->Render(x,y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void Bat::GetBoundingBox(float& left, float& top, float& right, float& bottom)

@@ -14,6 +14,7 @@
 #include "Bat.h"
 #include "Knight.h"
 #include "Candle.h"
+#include "Brickmove.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	CScene(id, filePath)
 {
 	key_handler = new CPlayScenceKeyHandler(this);
-	map = Map::GetInstance();
+	//map = Map::GetInstance();
 	camera = Camera::GetInstance();
 }
 
@@ -175,11 +176,14 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		torch->ID_Item= (int)atof(tokens[5].c_str());
 		break;
 	case OBJECT_TYPE_BRICK: 
-		obj = new Brick(); break;
+		obj = new Brick(); 
+		DebugOut(L"[INFO] Brick object created!\n");
+		break;
 	case 3: 
 		obj = new Whip();
 		whip = (Whip*)obj;
 		player2->SetWhip(whip);
+		DebugOut(L"[INFO] Whip object created!\n");
 		break;
 	case 5:
 	{
@@ -196,6 +200,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		objects_item.push_back(obj);
 		if(item->GetTypeItem()!=3)
 			return;
+		DebugOut(L"[INFO] Item object created!\n");
 		break;
 	}
 	case 6:
@@ -245,6 +250,15 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		candle = NULL;
 		candle = (Candle*)obj;
 		candle->ID_Item = (int)atof(tokens[5].c_str());
+		DebugOut(L"[INFO] Candle object created!\n");
+		break;
+	case 11:
+		obj = new Brickmove();
+		Brickmove* brick;
+		brick = NULL;
+		brick= (Brickmove*)obj;
+		brick->x_min = (int)atof(tokens[5].c_str());
+		brick->x_max = (int)atof(tokens[6].c_str());
 		break;
 	case OBJECT_TYPE_PORTAL:
 	{
@@ -269,8 +283,17 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	objects.push_back(obj);
 	grid = Grid::GetInstance();
-	if(obj!=NULL&& !dynamic_cast<Simon*>(obj))
-		grid->addObject(obj);
+	try
+	{
+		if (obj != NULL && !dynamic_cast<Simon*>(obj))
+			grid->addObject(obj);
+	}
+	catch (const std::exception& e)
+	{
+		DebugOut(L"loi %s\n", e);
+	}
+	/*if(obj!=NULL&& !dynamic_cast<Simon*>(obj))
+		grid->addObject(obj);*/
 }
 
 void CPlayScene::_ParseSection_MAP(string line)
@@ -280,6 +303,7 @@ void CPlayScene::_ParseSection_MAP(string line)
 	if (tokens.size() < 2) return; // skip invalid lines
 
 	LPCWSTR pathMap = ToLPCWSTR(tokens[1].c_str());
+	map = Map::GetInstance();
 	map->LoadFile(pathMap);
 	map->LoadMap(atoi(tokens[0].c_str()));
 }
@@ -489,12 +513,18 @@ void CPlayScene::Unload()
 {
 	for (int i = 0; i < objects.size(); i++)
 		delete objects[i];
-
 	objects.clear();
+
+	for (int i = 0; i < objects_item.size(); i++)
+		delete objects_item[i];
+	objects_item.clear();
+
 	//player = NULL;
+	player2->Unload();
 	player2 = NULL;
 	whip = NULL;
 	grid->ClearObject();
+	map->Clear();
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 

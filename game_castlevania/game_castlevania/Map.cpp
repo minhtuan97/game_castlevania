@@ -49,10 +49,10 @@ void Map::DrawMap()
 	//int tile_start_row = (int)my / widthTile;
 	Sprites* sprites = Sprites::GetInstance();
 	int a = -1;
-	DebugOut(L"bat dau\n");
+	//DebugOut(L"bat dau\n");
 	for (int i = 0; i < RowMap; i++)
-		//for (int j = tile_start_column; j < tile_column+ tile_start_column; j++)
-		for (int j = 0; j < ColumnMap; j++)
+		for (int j = tile_start_column; j < tile_column+ tile_start_column; j++)
+		//for (int j = 0; j < ColumnMap; j++)
 		{
 			
 			a = TileMap[i][j];
@@ -60,8 +60,21 @@ void Map::DrawMap()
 				sprites->Get(50000 + a)->Draw(j * widthTile, i * heightTile);
 			if (a == 55)DebugOut(L"%d	%d\n", j * widthTile, i * heightTile);
 		}
-	DebugOut(L"bhet\n");
+	//DebugOut(L"bhet\n");
 
+}
+
+void Map::Clear()
+{
+	if (_instance == NULL)
+		return;
+	else
+	{
+		/*for (int i = 0; i < RowMap; i++)
+			delete[] TileMap[i];
+		delete[] TileMap;*/
+		_instance = NULL;
+	}
 }
 
 float Map::GetHeight()

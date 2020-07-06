@@ -32,7 +32,7 @@ void Knight::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 void Knight::Render()
 {
 	animation_set->at(state)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void Knight::GetBoundingBox(float& left, float& top, float& right, float& bottom)

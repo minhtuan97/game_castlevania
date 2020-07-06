@@ -24,6 +24,7 @@ public:
 	void LoadFile(LPCWSTR filename);
 	void LoadMap(int idTextureMap);
 	void DrawMap();
+	void Clear();
 	float GetHeight();
 	float GetWidth();
 	static Map* GetInstance();

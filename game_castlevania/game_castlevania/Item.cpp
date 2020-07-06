@@ -73,5 +73,5 @@ void Item::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void Item::Render()
 {
 		animation_set->at(type)->Render(x, y);
-		RenderBoundingBox();
+		//RenderBoundingBox();
 }

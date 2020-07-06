@@ -11,6 +11,7 @@
 #include <cmath>
 #include "Bat.h"
 #include "Knight.h"
+#include "Brickmove.h"
 
 Simon* Simon::__instance = NULL;
 
@@ -97,8 +98,8 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				if (!isOnStair)
 				{
 					canClimbDownStair = true;
-					xStair = st->x + 3;
-					yStair = st->y;
+					xStair = st->x + 16;
+					yStair = st->y-8;
 					direcStair = st->nx;
 					//DebugOut(L"vao ham va cham voi top isOnStair=%d, isDownStair=%d, canClimbDownStair=%d\n", isOnStair, isDownStair, canClimbDownStair);
 				}
@@ -203,7 +204,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		{
 			if (!isIdleOnStair) {
 				bool isMovingX = false, isMovingY = false;
-				DebugOut(L"vao1 dx=%f dy=%f distanceX=%f distanceY=%f vx=%f vy=%f\n", dx, dy, distanceX, distanceY, vx, vy);
+				//DebugOut(L"vao1 dx=%f dy=%f distanceX=%f distanceY=%f vx=%f vy=%f\n", dx, dy, distanceX, distanceY, vx, vy);
 
 				if (std::abs(dx) < distanceX && distanceX != 0)
 				{
@@ -279,7 +280,18 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					y += 8;
 				}
 			}
-			
+			if (dynamic_cast<Brickmove*>(e->obj))
+			{
+				Brickmove* brick = dynamic_cast<Brickmove*>(e->obj);
+				isJump = false;
+				//DebugOut(L"vx=%f, dx=%f\n", vx, dx);
+				//x += dx;
+				vx = brick->vx;
+				dx = vx * (2*dt);
+				x += dx;
+				DebugOut(L"vx=%f, dx=%f\n", vx, dx);
+
+			}
 			
 			
 		}
@@ -322,7 +334,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 
-	DebugOut(L"ket thuc ham update isOnStair=%d, isDownStair=%d, canClimbDownStair=%d\n", isOnStair, isDownStair, canClimbDownStair);
+	//DebugOut(L"ket thuc ham update isOnStair=%d, isDownStair=%d, canClimbDownStair=%d\n", isOnStair, isDownStair, canClimbDownStair);
 
 
 }
@@ -508,7 +520,7 @@ void Simon::Render()
 		else
 			animation_set->at(ani)->Render(x, y, alpha);
 	
-	RenderBoundingBox();
+	//RenderBoundingBox();
 	//DebugOut(L"Xuat isJump: %d vy= %d\n", isJump, vy);
 	//DebugOut(L"Xuat curenframe: %d\n", animation_set->at(ani)->GetcurrenFrame());
 
@@ -753,4 +765,9 @@ void Simon::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 		bottom = y + 32;
 	}
 
+}
+
+void Simon::Unload()
+{
+	__instance = NULL;
 }

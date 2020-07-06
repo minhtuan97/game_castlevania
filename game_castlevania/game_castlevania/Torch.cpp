@@ -19,7 +19,7 @@ void Torch::Update(DWORD dt, vector<LPGAMEOBJECT>* listItem)
 void Torch::Render()
 {
 		animation_set->at(0)->Render(x, y);
-		RenderBoundingBox();
+		//RenderBoundingBox();
 }
 
 void Torch::GetBoundingBox(float& l, float& t, float& r, float& b)

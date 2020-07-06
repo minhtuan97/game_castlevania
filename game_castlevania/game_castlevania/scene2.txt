@@ -421,5 +421,4 @@
 
 # --- SCENE PORTAL ----
 #ID	 type	l	t	ani_set_id	r	b	scene_id
-
-
+550	50	122	2	0	150	16	3

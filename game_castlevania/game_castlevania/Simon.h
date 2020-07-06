@@ -6,7 +6,7 @@
 //0.1f
 #define SIMON_JUMP_SPEED_Y		0.5f
 #define SIMON_JUMP_DEFLECT_SPEED 0.2f
-#define SIMON_GRAVITY			0.0015f
+#define SIMON_GRAVITY			0.003f
 #define SIMON_DIE_DEFLECT_SPEED	 0.5f
 
 #define SIMON_STATE_IDLE_LEFT		0
@@ -114,5 +114,6 @@ public:
 	void SetWhip(Whip* whiptemp);
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	void Unload();
 };
 

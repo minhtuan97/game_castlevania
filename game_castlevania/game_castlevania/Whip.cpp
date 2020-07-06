@@ -63,7 +63,7 @@ void Whip::Render(int level,int nx, int frame, int alpha)
 	default:
 		break;
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void Whip::GetBoundingBox(float& l, float& t, float& r, float& b)

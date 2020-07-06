@@ -5,6 +5,7 @@
 20	textures\ItemsObjects.png	116	116	116
 21	textures\Enemies.png	116	116	116
 22	textures\Enemies2.png	116	116	116
+23	textures\brickmove.png	255	255	255
 
 #Map
 [MAP]
@@ -215,6 +216,8 @@
 30014	170	11	186	27	22
 #BatIdle					
 30008	237	11	253	27	21
+#brickmove
+30020	0	0	32	8	23
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
@@ -240,7 +243,7 @@
 717	20032	100	20033	100	20034	100	20035	100	20036	100
 718	20024	300
 719	20026	300
-1720	20008	300
+720	20008	300
 
 #brick
 800	50000	1000
@@ -273,12 +276,13 @@
 812	30008	100
 #KnightRIGHT	
 813	30009	400	30010	400	30011	400
-
+#brickmove
+820	30020	100
 
 #standing left
-720	20040	200	20041	200	20042	200	20043	200	20044	200	20045	200
+720	20040	100	20041	100	20042	100	20043	200	20044	200	20045	200
 #ducking left
-721	20046	200	20047	200	20048	200	20049	200	20050	200	20051	200
+721	20046	100	20047	100	20048	100	20049	200	20050	200	20051	200
 #ascend left
 722	20052	200	20053	200	20054	200	20055	200	20056	200	20057	200
 #desend left
@@ -323,11 +327,13 @@
 8	810	813
 #candle
 9	806
+#brickmove
+10	820
 [OBJECTS]
 # Id	type	x	y	ani_set_id	extra_settings per object type
-# type:  1 = Brick, 2 = Torch,  4=simon, 3= whip, 5=Item, 6=stairtop, 7=stairbot, 8=bat,9=knight, 10=candle
+# type:  1 = Brick, 2 = Torch,  4=simon, 3= whip, 5=Item, 6=stairtop, 7=stairbot, 8=bat,9=knight, 10=candle, 11= brickmove
 #simon
-0	4	450	30	2
+0	4	100	30	2
 #bat
 200	8	298	16	7	380	412	30	60
 #knight
@@ -429,12 +435,12 @@
 192	1	240	176	3
 193	1	480	176	3
 194	1	496	176	3
-
+195	1	456	112	3
 
 
 #stair
 # Id	type	x	y	ani_set_id	nx
-#170	6	160	82	-1	-1	
+170	6	442	84	-1	1	
 #171	7	104	169	-1	1
 #172	7	72	78	-1	1
 
@@ -459,7 +465,10 @@
 56	5	140	12	6	0
 57	5	74	12	6	0
 
+#brickmove
+1001	11	32	80	10	32	63
+
 # --- SCENE PORTAL ----
 #ID	 type	l	t	ani_set_id	r	b	scene_id
-
+550	50	0	32	0	16	82	2
 
