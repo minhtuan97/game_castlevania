@@ -54,13 +54,13 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		{
 			if (isUpStair)
 			{
-				vx = 0.01f;
-				vy = -0.01f;
+				vx = 0.02f;
+				vy = -0.02f;
 			}
 			else if(isDownStair)
 			{
-				vx = -0.01f;
-				vy = 0.01f;
+				vx = -0.02f;
+				vy = 0.02f;
 			}
 		}
 		else
@@ -130,7 +130,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				if (!isOnStair)
 				{
 					canClimbUpStair = true;
-					xStair = sb->x + 3;
+					xStair = sb->x;
 					yStair = sb->y;
 					direcStair = sb->nx;
 				}
@@ -171,168 +171,168 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		}
 	}
 
-	vector<LPCOLLISIONEVENT> coEvents;
-	vector<LPCOLLISIONEVENT> coEventsResult;
+		vector<LPCOLLISIONEVENT> coEvents;
+		vector<LPCOLLISIONEVENT> coEventsResult;
 
-	coEvents.clear();
+		coEvents.clear();
 
-	// turn off collision when die 
-	if (state != SIMON_STATE_DEATH_LEFT||state!= SIMON_STATE_DEATH_RIGHT)
-		CalcPotentialCollisions(colliable_objects, coEvents);
+		// turn off collision when die 
+		if (state != SIMON_STATE_DEATH_LEFT || state != SIMON_STATE_DEATH_RIGHT)
+			CalcPotentialCollisions(colliable_objects, coEvents);
 
-	// reset untouchable timer if untouchable time has passed
-	//if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
-	//{
-	//	untouchable_start = 0;
-	//	untouchable = 0;
-	//}
+		// reset untouchable timer if untouchable time has passed
+		//if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
+		//{
+		//	untouchable_start = 0;
+		//	untouchable = 0;
+		//}
 
-	// No collision occured, proceed normally
-	
-	for (UINT i = 0; i < coEvents.size(); i++)
-	{
-		LPCOLLISIONEVENT e = coEvents[i];
-		if (dynamic_cast<StairTop*>(e->obj) || dynamic_cast<StairBot*>(e->obj))
+		// No collision occured, proceed normally
+
+		for (UINT i = 0; i < coEvents.size(); i++)
 		{
-			coEvents.erase(coEvents.begin() + i);
-		}
-	}
-
-	if (coEvents.size() == 0)
-	{
-		if (isOnStair)
-		{
-			if (!isIdleOnStair) {
-				bool isMovingX = false, isMovingY = false;
-				//DebugOut(L"vao1 dx=%f dy=%f distanceX=%f distanceY=%f vx=%f vy=%f\n", dx, dy, distanceX, distanceY, vx, vy);
-
-				if (std::abs(dx) < distanceX && distanceX != 0)
-				{
-					x = x + dx;
-					distanceX = distanceX- std::abs(dx);
-				}
-				else
-				{
-					if (dx > 0)
-						x = x + distanceX;
-					else
-						x = x - distanceX;
-					distanceX = 0;
-					isMovingX = true;
-				}
-				if (std::abs(dy) < distanceY && distanceY != 0)
-				{
-					y = y + dy;
-					distanceY = distanceY- std::abs(dy);
-				}
-				else
-				{
-					if (dy > 0)
-						y = y + distanceY;
-					else
-						y = y - distanceY;
-
-					distanceY = 0;
-					isMovingY = true;
-				}
-				if (isMovingX && isMovingY)
-					IdleOnStair();
+			LPCOLLISIONEVENT e = coEvents[i];
+			if (dynamic_cast<StairTop*>(e->obj) || dynamic_cast<StairBot*>(e->obj))
+			{
+				coEvents.erase(coEvents.begin() + i);
 			}
+		}
+
+		if (coEvents.size() == 0)
+		{
+			if (isOnStair)
+			{
+				if (!isIdleOnStair) {
+					bool isMovingX = false, isMovingY = false;
+					DebugOut(L"vao1 dx=%f dy=%f distanceX=%f distanceY=%f vx=%f vy=%f\n", dx, dy, distanceX, distanceY, vx, vy);
+
+					if (std::abs(dx) < distanceX && distanceX != 0)
+					{
+						x = x + direcStair * dx;
+						distanceX = distanceX - std::abs(dx);
+					}
+					else
+					{
+						if (dx > 0)
+							x = x + distanceX;
+						else
+							x = x - distanceX;
+						distanceX = 0;
+						isMovingX = true;
+					}
+					if (std::abs(dy) < distanceY && distanceY != 0)
+					{
+						y = y + dy;
+						distanceY = distanceY - std::abs(dy);
+					}
+					else
+					{
+						if (dy > 0)
+							y = y + distanceY;
+						else
+							y = y - distanceY;
+
+						distanceY = 0;
+						isMovingY = true;
+					}
+					if (isMovingX && isMovingY)
+						IdleOnStair();
+				}
+			}
+			else
+			{
+				x += dx;
+				y += dy;
+			}
+
 		}
 		else
 		{
-			x += dx;
-			y += dy;
-		}
-		
-	}
-	else
-	{
-		float min_tx, min_ty, nx = 0, ny;
+			float min_tx, min_ty, nx = 0, ny;
 
-		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
+			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
 
 
-		// block 
-		x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
-		y += min_ty * dy + ny * 0.4f;
+			// block 
+			x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
+			y += min_ty * dy + ny * 0.4f;
 
-		if (nx != 0) vx = 0;
-		if (ny != 0)
-		{
-			vy = 0;
-			isJump = false;
-		}
-		/*else
-			isJump = true;*/
-
-		for (UINT i = 0; i < coEventsResult.size(); i++)
-		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-
-			if (dynamic_cast<Brick*>(e->obj))
+			if (nx != 0) vx = 0;
+			if (ny != 0)
 			{
-
+				vy = 0;
 				isJump = false;
-				if (isDownStair)
+			}
+			/*else
+				isJump = true;*/
+
+			for (UINT i = 0; i < coEventsResult.size(); i++)
+			{
+				LPCOLLISIONEVENT e = coEventsResult[i];
+
+				if (dynamic_cast<Brick*>(e->obj))
 				{
-					//x -= 10;
-					y += 8;
+
+					isJump = false;
+					if (isDownStair)
+					{
+						//x -= 10;
+						y += 8;
+					}
 				}
-			}
-			if (dynamic_cast<Brickmove*>(e->obj))
-			{
-				Brickmove* brick = dynamic_cast<Brickmove*>(e->obj);
-				isJump = false;
-				//DebugOut(L"vx=%f, dx=%f\n", vx, dx);
-				//x += dx;
-				vx = brick->vx;
-				dx = vx * (2*dt);
-				x += dx;
-				DebugOut(L"vx=%f, dx=%f\n", vx, dx);
-
-			}
-			
-			
-		}
-		//Collision logic with item
-		for (UINT i = 0; i < coEventsResult.size(); i++)
-		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-
-			if (dynamic_cast<Item*>(e->obj))
-			{
-				Item* item = dynamic_cast<Item*>(e->obj);
-				item->isfinish = true;
-				if (item->GetTypeItem() == WHIP)
+				if (dynamic_cast<Brickmove*>(e->obj))
 				{
-					preframe = 0;
-					loopani = 0;
-					Color();
-				}
-				Grid* grid = Grid::GetInstance();
-				grid->deleteObject(e->obj);
-				
-			}
-			if (dynamic_cast<Portal*>(e->obj))
-			{
-				Portal* p = dynamic_cast<Portal*>(e->obj);
-				Game::GetInstance()->SwitchScene(p->GetSceneId());
-			}
-					
-		}
-		
-		//	// if Portal 
-		//	else if (dynamic_cast<Portal*>(e->obj))
-		//	{
-		//		Portal* p = dynamic_cast<Portal*>(e->obj);
-		//		Game::GetInstance()->SwitchScene(p->GetSceneId());
-		//	}
-		//}
-	}
+					Brickmove* brick = dynamic_cast<Brickmove*>(e->obj);
+					isJump = false;
+					//DebugOut(L"vx=%f, dx=%f\n", vx, dx);
+					//x += dx;
+					vx = brick->vx;
+					dx = vx * (2 * dt);
+					x += dx;
+					DebugOut(L"vx=%f, dx=%f\n", vx, dx);
 
-	// clean up collision events
-	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+				}
+
+
+			}
+			//Collision logic with item
+			for (UINT i = 0; i < coEventsResult.size(); i++)
+			{
+				LPCOLLISIONEVENT e = coEventsResult[i];
+
+				if (dynamic_cast<Item*>(e->obj))
+				{
+					Item* item = dynamic_cast<Item*>(e->obj);
+					item->isfinish = true;
+					if (item->GetTypeItem() == WHIP)
+					{
+						preframe = 0;
+						loopani = 0;
+						Color();
+					}
+					Grid* grid = Grid::GetInstance();
+					grid->deleteObject(e->obj);
+
+				}
+				if (dynamic_cast<Portal*>(e->obj))
+				{
+					Portal* p = dynamic_cast<Portal*>(e->obj);
+					Game::GetInstance()->SwitchScene(p->GetSceneId());
+				}
+
+			}
+
+			//	// if Portal 
+			//	else if (dynamic_cast<Portal*>(e->obj))
+			//	{
+			//		Portal* p = dynamic_cast<Portal*>(e->obj);
+			//		Game::GetInstance()->SwitchScene(p->GetSceneId());
+			//	}
+			//}
+		}
+
+		// clean up collision events
+		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 
 	//DebugOut(L"ket thuc ham update isOnStair=%d, isDownStair=%d, canClimbDownStair=%d\n", isOnStair, isDownStair, canClimbDownStair);
 
@@ -368,10 +368,19 @@ void Simon::Render()
 			if (isIdleOnStair)
 			{
 				if (isUpStair)
-					ani = SIMON_ANI_ASCEND_IDLE_RIGHT;
+				{
+					if (nx_stair > 0)
+						ani = SIMON_ANI_ASCEND_IDLE_RIGHT;
+					else
+						ani = SIMON_ANI_ASCEND_IDLE_LEFT;
+				}
 				else if (isDownStair)
-					ani = SIMON_ANI_DESCEND_IDLE_LEFT;
-
+				{
+					if (nx_stair > 0)
+						ani = SIMON_ANI_DESCEND_IDLE_RIGHT;
+					else
+						ani = SIMON_ANI_DESCEND_IDLE_LEFT;
+				}
 			}
 			else
 			{
@@ -559,21 +568,21 @@ void Simon::SetState(int state)
 		isJump = true;
 		break;
 	case SIMON_STATE_ASCEND_LEFT:
-		vx=vy = 0;
+		//vx=vy = 0;
 		isOnStair = true;
 		break;
 	case SIMON_STATE_ASCEND_RIGHT:
-		vx=vy = 0;
+		//vx=vy = 0;
 		isOnStair = true;
 		isIdleOnStair = false;
 		break;
 	case SIMON_STATE_DESCEND_LEFT:
-		vx = vy = 0;
+		//vx = vy = 0;
 		isOnStair = true;
 		break;
 	case SIMON_STATE_DESCEND_RIGHT:
-		vx = SIMON_WALKING_SPEED;
-		vy = -SIMON_WALKING_SPEED;
+		//vx = SIMON_WALKING_SPEED;
+		//vy = -SIMON_WALKING_SPEED;
 		isOnStair = true;
 		break;
 	case SIMON_STATE_HURT_LEFT:

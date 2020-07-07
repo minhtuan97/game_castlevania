@@ -6,7 +6,7 @@ StairBot::StairBot()
 
 void StairBot::Render()
 {
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void StairBot::GetBoundingBox(float& l, float& t, float& r, float& b)
