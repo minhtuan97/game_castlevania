@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Whip.h"
+#include "Weapon.h"
 
 #define SIMON_WALKING_SPEED		0.08f 
 //0.1f
@@ -80,6 +81,7 @@ class Simon: public GameObject
 	int preframe = 0;
 	int loopani=0;
 	Whip* whip;
+	vector<Weapon*> listWeapon;
 	int nx_stair;
 	static Simon* __instance;
 	
@@ -94,7 +96,7 @@ public:
 	int direcStair;
 	float xStair, yStair;
 	float distanceX, distanceY;
-
+	bool isAttact = false;
 
 	Simon(float x = 0.0f, float y = 0.0f);
 	static Simon* GetInstance();
@@ -111,9 +113,10 @@ public:
 	void StairDown();
 	void StairUp();
 	void IdleOnStair();
+	void attackWeapon();
 
 	void SetWhip(Whip* whiptemp);
-
+	//void Set
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void Unload();
 };

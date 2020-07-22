@@ -12,6 +12,9 @@
 #include "Bat.h"
 #include "Knight.h"
 #include "Brickmove.h"
+#include "Boomerang.h"
+#include "HolyWater.h"
+#include "Axe.h"
 
 Simon* Simon::__instance = NULL;
 
@@ -24,6 +27,9 @@ Simon::Simon(float x, float y)
 	start_y = y;
 	this->x = x;
 	this->y = y;
+	isOnStair = false;
+	listWeapon.clear();
+	
 
 }
 
@@ -98,8 +104,8 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				if (!isOnStair)
 				{
 					canClimbDownStair = true;
-					xStair = st->x + 16;
-					yStair = st->y-8;
+					xStair = st->x;
+					yStair = st->y;
 					direcStair = st->nx;
 					//DebugOut(L"vao ham va cham voi top isOnStair=%d, isDownStair=%d, canClimbDownStair=%d\n", isOnStair, isDownStair, canClimbDownStair);
 				}
@@ -169,16 +175,45 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				grid->deleteObject(bat);
 			}
 		}
+		if (dynamic_cast<Portal*>(colliable_objects->at(i)))
+		{
+			Portal* p = dynamic_cast<Portal*>(colliable_objects->at(i));
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			p->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				Game::GetInstance()->SwitchScene(p->GetSceneId());
+				return;
+			}
+		}
+
 	}
 
 		vector<LPCOLLISIONEVENT> coEvents;
 		vector<LPCOLLISIONEVENT> coEventsResult;
 
 		coEvents.clear();
+		vector<LPGAMEOBJECT> list;
+
+
+
+		//for (int i = 0; i < colliable_objects->size(); i++)
+			//list.push_back(colliable_objects->at(i));
+
+		
+		for (int i = 0; i < colliable_objects->size(); i++)
+		{
+			if (!(dynamic_cast<Brick*>(colliable_objects->at(i))&&isOnStair))
+			{
+				list.push_back(colliable_objects->at(i));
+			}
+		}
 
 		// turn off collision when die 
-		if (state != SIMON_STATE_DEATH_LEFT || state != SIMON_STATE_DEATH_RIGHT)
-			CalcPotentialCollisions(colliable_objects, coEvents);
+		if (!isOnStair && (state != SIMON_STATE_DEATH_LEFT || state != SIMON_STATE_DEATH_RIGHT))
+			CalcPotentialCollisions(&list, coEvents);
 
 		// reset untouchable timer if untouchable time has passed
 		//if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
@@ -204,7 +239,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 			{
 				if (!isIdleOnStair) {
 					bool isMovingX = false, isMovingY = false;
-					DebugOut(L"vao1 dx=%f dy=%f distanceX=%f distanceY=%f vx=%f vy=%f\n", dx, dy, distanceX, distanceY, vx, vy);
+					//DebugOut(L"vao1 dx=%f dy=%f distanceX=%f distanceY=%f vx=%f vy=%f\n", dx, dy, distanceX, distanceY, vx, vy);
 
 					if (std::abs(dx) < distanceX && distanceX != 0)
 					{
@@ -310,9 +345,25 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 						loopani = 0;
 						Color();
 					}
+
 					Grid* grid = Grid::GetInstance();
 					grid->deleteObject(e->obj);
 
+					if (item->GetTypeItem() == BOOMERANG)
+					{
+						Weapon* boom =  new Boomerang();
+						listWeapon.push_back(boom);
+					}
+					if (item->GetTypeItem() == HOLYWATER)
+					{
+						Weapon* water = new HolyWater();
+						listWeapon.push_back(water);
+					}
+					if (item->GetTypeItem() == AXE)
+					{
+						Axe* axe = new Axe();
+						listWeapon.push_back(axe);
+					}
 				}
 				if (dynamic_cast<Portal*>(e->obj))
 				{
@@ -321,22 +372,35 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				}
 
 			}
-
-			//	// if Portal 
-			//	else if (dynamic_cast<Portal*>(e->obj))
-			//	{
-			//		Portal* p = dynamic_cast<Portal*>(e->obj);
-			//		Game::GetInstance()->SwitchScene(p->GetSceneId());
-			//	}
-			//}
 		}
 
 		// clean up collision events
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 
 	//DebugOut(L"ket thuc ham update isOnStair=%d, isDownStair=%d, canClimbDownStair=%d\n", isOnStair, isDownStair, canClimbDownStair);
+		for (int i = 0; i < listWeapon.size(); i++)
+			listWeapon.at(i)->Update(dt, colliable_objects);
+		for (int i = 0; i < listWeapon.size(); i++)
+			if (!listWeapon.at(i)->GetAttack()&&isAttact)
+				isAttact = false;
+		
+		//xet va cham voi weapon
+		for (int i = 0; i < listWeapon.size(); i++)
+		{
+			if (dynamic_cast<Boomerang*>(listWeapon.at(i)))
+			{
+				Boomerang* b = dynamic_cast<Boomerang*>(listWeapon.at(i));
 
+				float l1, t1, r1, b1, l2, t2, r2, b2;
+				GetBoundingBox(l1, t1, r1, b1);
+				b->GetBoundingBox(l2, t2, r2, b2);
 
+				if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2)&& listWeapon.at(i)->GetFirst())
+				{
+					listWeapon.at(i)->SetAttack(false);
+				}
+			}
+		}
 }
 
 void Simon::Render()
@@ -528,7 +592,9 @@ void Simon::Render()
 			animation_set->at(ani)->Render(x - 8, y, alpha);
 		else
 			animation_set->at(ani)->Render(x, y, alpha);
-	
+		
+		for (int i = 0; i < listWeapon.size(); i++)
+			listWeapon.at(i)->Render();
 	//RenderBoundingBox();
 	//DebugOut(L"Xuat isJump: %d vy= %d\n", isJump, vy);
 	//DebugOut(L"Xuat curenframe: %d\n", animation_set->at(ani)->GetcurrenFrame());
@@ -725,6 +791,19 @@ void Simon::IdleOnStair()
 	isIdleOnStair = true;
 	vx = vy = 0;
 	DebugOut(L"dung \n");
+}
+
+void Simon::attackWeapon()
+{
+	isAttact = true;
+	for (int i = 0; i < listWeapon.size(); i++)
+	{
+		/*listWeapon.at(i)->SetAttack(true);
+		listWeapon.at(i)->SetPosition(x, y);
+		listWeapon.at(i)->nx = nx;
+		listWeapon.at(i)->SetFirst(false);*/
+		listWeapon.at(i)->Reset(x, y, nx);
+	}
 }
 
 void Simon::SetWhip(Whip* whiptemp)

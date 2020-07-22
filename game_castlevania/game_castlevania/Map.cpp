@@ -58,7 +58,7 @@ void Map::DrawMap()
 			a = TileMap[i][j];
 			if(a>=0)
 				sprites->Get(50000 + a)->Draw(j * widthTile, i * heightTile);
-			if (a == 55)DebugOut(L"%d	%d\n", j * widthTile, i * heightTile);
+			//if (a == 55)DebugOut(L"%d	%d\n", j * widthTile, i * heightTile);
 		}
 	//DebugOut(L"bhet\n");
 
@@ -79,12 +79,12 @@ void Map::Clear()
 
 float Map::GetHeight()
 {
-	return heightTile* RowMap;
+	return heightTile* (RowMap);
 }
 
 float Map::GetWidth()
 {
-	return widthTile * ColumnMap;
+	return widthTile * (ColumnMap);
 }
 
 Map* Map::GetInstance()

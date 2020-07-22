@@ -21,7 +21,8 @@ bool Grid::checkObj(vector<LPGAMEOBJECT>* listobj, LPGAMEOBJECT e)
 
 Grid* Grid::GetInstance()
 {
-	if (_instance == NULL) _instance = new Grid();
+	if (_instance == NULL) 
+		_instance = new Grid();
 	return _instance;
 }
 
@@ -97,11 +98,21 @@ void Grid::GetListOfObjects(vector<LPGAMEOBJECT>* list_object)
 
 void Grid::ClearObject()
 {
-	if (this == NULL)
+	if (_instance  == NULL)
 		return;
-	for (int i = 0; i < cell_cloumn; i++)
+	/*for (int i = 0; i < cell_cloumn; i++)
 		for (int j = 0; j < cell_row; j++)
 			cells[i][j].Unload();
+	_instance == NULL;
+	delete _instance;*/
+
+
+	if (NULL != _instance)
+	{
+		delete _instance;
+		_instance = NULL;
+	}
+	return;
 }
 
 void Grid::deleteObject(LPGAMEOBJECT object)

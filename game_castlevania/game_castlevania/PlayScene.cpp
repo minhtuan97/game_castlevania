@@ -15,6 +15,10 @@
 #include "Knight.h"
 #include "Candle.h"
 #include "Brickmove.h"
+#include "Ghost.h"
+#include "Monkey.h"
+#include "White.h"
+#include "Zombie.h"
 
 using namespace std;
 
@@ -154,7 +158,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	GameObject* obj = NULL;
 
-	switch (object_type)
+  	switch (object_type)
 	{
 	case 4:
 		if (player2 != NULL)
@@ -259,6 +263,48 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		brick= (Brickmove*)obj;
 		brick->x_min = (int)atof(tokens[5].c_str());
 		brick->x_max = (int)atof(tokens[6].c_str());
+		break;
+	case 12:
+		obj = new Ghost();
+		Ghost* ghost;
+		ghost = NULL;
+		ghost = (Ghost*)obj;
+		ghost->x_left = (int)atof(tokens[5].c_str());
+		ghost->x_right = (int)atof(tokens[6].c_str());
+		ghost->nx= (int)atof(tokens[7].c_str());
+		break;
+	case 13:
+		xLeftCreateGhost = x;
+		xRightCreateGhost = y;
+		yCreateGhost= (int)atof(tokens[5].c_str());
+		animationsetID = atoi(tokens[4].c_str());;
+		return;
+	case 14:
+		obj = new Monkey();
+		Monkey* monkey;
+		monkey = NULL;
+		monkey = (Monkey*)obj;
+		monkey->xde = x;
+		monkey->yde = y;
+		break;
+	case 15:
+		obj = new White();
+		White* white;
+		white = NULL;
+		white = (White*)obj;
+		white->xde = x;
+		white->yde = y;
+		break;
+	case 16:
+		obj = new Zombie();
+		Zombie* zombie;
+		zombie = NULL;
+		zombie= (Zombie*)obj;
+		zombie->x_de = x;
+		zombie->y_de = y;
+		break;
+	case 17:
+
 		break;
 	case OBJECT_TYPE_PORTAL:
 	{
@@ -377,6 +423,9 @@ void CPlayScene::Update(DWORD dt)
 	vector<LPGAMEOBJECT> listTorch;
 	vector<LPGAMEOBJECT> listCandle;
 	vector<LPGAMEOBJECT> listItem;
+	vector<LPGAMEOBJECT> listGhost;
+
+
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
@@ -388,9 +437,12 @@ void CPlayScene::Update(DWORD dt)
 			else
 			{
 				coObjects.push_back(objects[i]);
-			if (dynamic_cast<Item*>(objects[i]))
-				listItem.push_back(objects[i]);
-			else
+				if (dynamic_cast<Item*>(objects[i]))
+					listItem.push_back(objects[i]);
+				else
+					if (dynamic_cast<Ghost*>(objects[i]))
+						listGhost.push_back(objects[i]);
+					else
 				{
 				coObjects2.push_back(objects[i]);
 				}
@@ -420,7 +472,35 @@ void CPlayScene::Update(DWORD dt)
 	{
 		listItem[i]->Update(dt, &coObjects2);
 	}
+
+	for (size_t i = 0; i < listGhost.size(); i++)
+	{
+		listGhost[i]->Update(dt, &coObjects2);
+	}
+
+	for (size_t i = 0; i < coObjects.size(); i++)
+	{
+		if (dynamic_cast<Ghost*>(coObjects[i]))
+		{
+			Ghost* g = dynamic_cast<Ghost*>(coObjects[i]);
+			if (!g->isHide)
+				coObjects.erase(std::remove(coObjects.begin(), coObjects.end(), g), coObjects.end());
+		}
+	}
 	player2->Update(dt, &coObjects);
+	float gx, gy;
+	//player2->GetPosition(gx, gy);
+	/*if (xLeftCreateGhost < gx && gx < xRightCreateGhost) isCreateGhost = true;
+	if (isCreateGhost && (xLeftCreateGhost > gx || gx > xRightCreateGhost))
+	{
+		Ghost* g = new Ghost(xRightCreateGhost-50,yCreateGhost,-1);
+		CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+		LPANIMATION_SET ani_set = animation_sets->Get(animationsetID);
+		g->SetAnimationSet(ani_set);
+		grid->addObject(g);
+		g->isHide = true;
+		isCreateGhost = false;
+	}*/
 
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
@@ -436,6 +516,7 @@ void CPlayScene::Update(DWORD dt)
 	//Game* game = Game::GetInstance();
 	//cx -= game->GetScreenWidth() / 2;
 	//cy -= game->GetScreenHeight() / 2;
+	//camera = Camera::GetInstance();
 	D3DXVECTOR3 pos = camera->GetCameraPosition();
 	if (mapwidth > SCREEN_WIDTH ) {
 		if (cx  + 5 < SCREEN_WIDTH / 2) {
@@ -525,6 +606,7 @@ void CPlayScene::Unload()
 	whip = NULL;
 	grid->ClearObject();
 	map->Clear();
+	camera->SetCameraPosition(0, 0);
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
@@ -553,9 +635,12 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		simon->Jump();
 		break;
 	case DIK_A:
-		simon->Reset();
+		//((CPlayScene*)scence)->Unload();
 		break;
 	case DIK_Z:
+		if (!simon->isAttact)
+			if (game->IsKeyDown(DIK_UP))
+				simon->attackWeapon();
 		simon->Standing();
 		break;
 	case DIK_ESCAPE:

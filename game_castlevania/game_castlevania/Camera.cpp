@@ -38,6 +38,15 @@ D3DXVECTOR3 Camera::GetCameraPosition()
 	return this->cameraPosition;
 }
 
+void Camera::Unload()
+{
+	if (__instance == NULL) return;
+	else
+	{
+		__instance = NULL;
+	}
+}
+
 Camera::~Camera()
 {
 

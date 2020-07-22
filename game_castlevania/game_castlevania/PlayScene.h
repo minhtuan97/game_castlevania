@@ -24,8 +24,10 @@ protected:
 	vector<LPGAMEOBJECT> objects;
 	
 	vector<LPGAMEOBJECT> objects_item;
-
-
+	float xLeftCreateGhost, xRightCreateGhost;
+	float yCreateGhost;
+	boolean isCreateGhost = false;
+	int animationsetID;
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);

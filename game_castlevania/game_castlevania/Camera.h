@@ -15,6 +15,7 @@ public:
 	void SetCameraPosition(float x, float y);
 	void Setwidthheight(int x, int y);
 	D3DXVECTOR3 GetCameraPosition();
+	void Unload();
 	~Camera();
 
 };
