@@ -1,12 +1,33 @@
 #pragma once
 #include "GameObject.h"
+#include "Simon.h"
+
+#define WHITE_WALKING_SPEED		0.08f 
+#define WHITE_JUMP_SPEED_Y		0.5f
+#define WHITE_JUMP_DEFLECT_SPEED 0.2f
+#define WHITE_GRAVITY			0.003f
+#define WHITE_DIE_DEFLECT_SPEED	 0.5f
+
+#define  WHITE_STATE_IDLE_LEFT		0
+#define  WHITE_STATE_IDLE_RIGHT		1
+#define  WHITE_STATE_WALK_LEFT		2
+#define  WHITE_STATE_WALK_RIGHT		3
+#define  WHITE_STATE_JUMP_LEFT		4
+#define  WHITE_STATE_JUMP_RIGHT		5
 
 class White:public GameObject
 {
 	bool isIdle = true;
-	bool isWalke = false;
+	bool isWalk = false;
 	bool isJump = false;
-
+	bool isGo = false;
+	bool isBack = false;
+	Simon* simon;
+	Camera* cam;
+	float denta;
+	float x_backup;
+	float y_backup;
+	
 public:
 	float xde, yde;
 	White();

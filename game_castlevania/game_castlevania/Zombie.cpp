@@ -107,7 +107,7 @@ void Zombie::Render()
 	if (nx_zombie > 0)
 		ani = 1;
 	animation_set->at(ani)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void Zombie::GetBoundingBox(float& left, float& top, float& right, float& bottom)

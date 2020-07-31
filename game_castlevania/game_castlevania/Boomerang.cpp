@@ -14,7 +14,7 @@ void Boomerang::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (!isAttack) return;
 	vx = BOOMERANG_SPEED * nx;
 	GameObject::Update(dt); // cập nhật thời gian, vận tốc
-
+	Weapon::Update(dt, coObjects);
 	// Simple fall down
 	//vy += MARIO_GRAVITY * dt;
 
@@ -111,7 +111,7 @@ void Boomerang::Render()
 	if (!isAttack) return;
 
 	animation_set->at(0)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void Boomerang::GetBoundingBox(float& left, float& top, float& right, float& bottom)

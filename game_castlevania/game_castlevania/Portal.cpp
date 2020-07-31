@@ -12,7 +12,7 @@ Portal::Portal(float l, float t, float r, float b, int scene_id)
 
 void Portal::Render()
 {
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void Portal::GetBoundingBox(float& l, float& t, float& r, float& b)

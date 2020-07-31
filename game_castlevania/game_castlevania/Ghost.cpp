@@ -41,8 +41,10 @@ void Ghost::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	GameObject::Update(dt);
 	
 	
-	if (y > ysimon - 6)
+	if (y > ysimon)
+	{
 		vy = 0;
+	}
 	else
 		vy += GHOST_GRAVITY * dt;
 
@@ -78,6 +80,10 @@ void Ghost::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			vy = 0;
 			//vx = 0;
 		}
+	}
+	if (y > ysimon)
+	{
+		vy = 0;
 	}
 	if ((x < x_left && vx < 0) || (x > x_right && vx > 0))
 		nx *= -1;

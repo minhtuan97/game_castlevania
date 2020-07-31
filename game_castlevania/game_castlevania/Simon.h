@@ -67,6 +67,8 @@
 
 #define SIMON_UNTOUCHABLE_TIME 5000
 
+#define Timeuntouch	1000
+
 class Simon: public GameObject
 {
 	int level;

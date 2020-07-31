@@ -19,6 +19,7 @@ void Axe::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	vy = Axe_SPEED_Y * ny;
 	GameObject::Update(dt); // cập nhật thời gian, vận tốc
+	Weapon::Update(dt, coObjects);
 
 	//vector<LPCOLLISIONEVENT> coEvents;
 	//vector<LPCOLLISIONEVENT> coEventsResult;

@@ -20,8 +20,9 @@ void HolyWater::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	//Simple fall down
 	
 		vy = Fire_GRAVITY;
-	GameObject::Update(dt); // cập nhật thời gian, vận tốc
 
+	GameObject::Update(dt); // cập nhật thời gian, vận tốc
+	Weapon::Update(dt, coObjects);
 
 
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -109,7 +110,7 @@ void HolyWater::Render()
 	if (!isAttack) return;
 
 	animation_set->at(state)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void HolyWater::GetBoundingBox(float& left, float& top, float& right, float& bottom)

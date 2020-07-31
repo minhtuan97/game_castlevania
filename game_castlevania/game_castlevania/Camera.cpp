@@ -23,8 +23,11 @@ D3DXVECTOR3 Camera::GetPositionInCamera(D3DXVECTOR3 position)
 
 void Camera::SetCameraPosition(float x, float y)
 {
-	this->cameraPosition.x = x;
-	this->cameraPosition.y = y;
+	if (!block)
+	{
+		this->cameraPosition.x = x;
+		this->cameraPosition.y = y;
+	}
 }
 
 void Camera::Setwidthheight(int x, int y)

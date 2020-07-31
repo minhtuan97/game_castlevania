@@ -8,7 +8,9 @@ private:
 	int width, height;
 	static Camera* __instance;
 
+
 public:
+	bool block = false;
 	Camera();
 	static Camera* GetInstance();
 	D3DXVECTOR3 GetPositionInCamera(D3DXVECTOR3 position);

@@ -15,6 +15,12 @@
 #include "Boomerang.h"
 #include "HolyWater.h"
 #include "Axe.h"
+#include "BrickJump.h"
+#include "BatBoss.h"
+#include "Zombie.h"
+#include "White.h"
+#include "Monkey.h"
+#include "Ghost.h"
 
 Simon* Simon::__instance = NULL;
 
@@ -117,10 +123,12 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 						isDownStair = false;
 						isUpStair = false;
 						x = st->x;
-						y= st->y; 
+						y = st->y;
 					}
 
 			}
+			else
+				canClimbDownStair = false;
 		}
 
 		else if (dynamic_cast<StairBot*>(colliable_objects->at(i)))
@@ -144,10 +152,15 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					if (isDownStair) {
 						isOnStair = false;
 						nx = nx_stair;
-						canClimbDownStair = false;
+						canClimbUpStair = false;
+						isDownStair = false;
+						isUpStair = false;
 					}
 				
 			}
+			/*else
+				canClimbUpStair = false;*/
+
 		}
 		if (dynamic_cast<Knight*>(colliable_objects->at(i)))
 		{
@@ -158,6 +171,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
 			{
+				StartUntouchable();
 				Grid* grid = Grid::GetInstance();
 				grid->deleteObject(knight);
 			}
@@ -171,6 +185,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
 			{
+				StartUntouchable();
 				Grid* grid = Grid::GetInstance();
 				grid->deleteObject(bat);
 			}
@@ -188,7 +203,80 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				return;
 			}
 		}
+		if (dynamic_cast<BatBoss*>(colliable_objects->at(i)))
+		{
+			BatBoss* b = dynamic_cast<BatBoss*>(colliable_objects->at(i));
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			b->GetBoundingBox(l2, t2, r2, b2);
 
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				StartUntouchable();
+			}
+		}
+		if (dynamic_cast<Zombie*>(colliable_objects->at(i)))
+		{
+			Zombie* z = dynamic_cast<Zombie*>(colliable_objects->at(i));
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			z->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				StartUntouchable();
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(z);
+			}
+		}
+		if (dynamic_cast<White*>(colliable_objects->at(i)))
+		{
+			White* w = dynamic_cast<White*>(colliable_objects->at(i));
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			w->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				StartUntouchable();
+			}
+		}
+		if (dynamic_cast<Monkey*>(colliable_objects->at(i)))
+		{
+			Monkey* m = dynamic_cast<Monkey*>(colliable_objects->at(i));
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			m->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				StartUntouchable();
+			}
+		}
+		if (dynamic_cast<Ghost*>(colliable_objects->at(i)))
+		{
+			Ghost* m = dynamic_cast<Ghost*>(colliable_objects->at(i));
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			m->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				StartUntouchable();
+			}
+		}
+		if (dynamic_cast<White*>(colliable_objects->at(i)))
+		{
+			White* m = dynamic_cast<White*>(colliable_objects->at(i));
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			m->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				StartUntouchable();
+			}
+		}
 	}
 
 		vector<LPCOLLISIONEVENT> coEvents;
@@ -205,7 +293,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		
 		for (int i = 0; i < colliable_objects->size(); i++)
 		{
-			if (!(dynamic_cast<Brick*>(colliable_objects->at(i))&&isOnStair))
+			if ((!(dynamic_cast<Brick*>(colliable_objects->at(i))&&isOnStair))|| !(dynamic_cast<BrickJump*>(colliable_objects->at(i))))
 			{
 				list.push_back(colliable_objects->at(i));
 			}
@@ -227,7 +315,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		for (UINT i = 0; i < coEvents.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEvents[i];
-			if (dynamic_cast<StairTop*>(e->obj) || dynamic_cast<StairBot*>(e->obj))
+			if (dynamic_cast<StairTop*>(e->obj) || dynamic_cast<StairBot*>(e->obj)|| dynamic_cast<BrickJump*>(e->obj))
 			{
 				coEvents.erase(coEvents.begin() + i);
 			}
@@ -365,6 +453,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 						listWeapon.push_back(axe);
 					}
 				}
+				
 				if (dynamic_cast<Portal*>(e->obj))
 				{
 					Portal* p = dynamic_cast<Portal*>(e->obj);
@@ -377,7 +466,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		// clean up collision events
 		for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 
-	//DebugOut(L"ket thuc ham update isOnStair=%d, isDownStair=%d, canClimbDownStair=%d\n", isOnStair, isDownStair, canClimbDownStair);
+	DebugOut(L"ket thuc ham update isOnStair=%d, isDownStair=%d, canClimbDownStair=%d, isUpStair=%d, canClimbUpStair=%d\n ", isOnStair, isDownStair, canClimbDownStair, isUpStair, canClimbUpStair);
 		for (int i = 0; i < listWeapon.size(); i++)
 			listWeapon.at(i)->Update(dt, colliable_objects);
 		for (int i = 0; i < listWeapon.size(); i++)
@@ -401,6 +490,18 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				}
 			}
 		}
+
+		if (GetTickCount() - untouchable_start > Timeuntouch)
+			untouchable = 0;
+
+		Camera* cam = Camera::GetInstance();
+		float x_cam, y_cam;
+		x_cam = cam->GetCameraPosition().x;
+		y_cam = cam->GetCameraPosition().y;
+		if (x < x_cam + 1)
+			x = x_cam + 1;
+		if (y > SCREEN_HEIGHT)
+			cam->block = true;
 }
 
 void Simon::Render()
@@ -579,7 +680,7 @@ void Simon::Render()
 				if (currentframe == 2)
 				{
 					if (nx > 0)
-						whip->SetPosition(r, t);
+						whip->SetPosition(r+8, t);
 					else
 						whip->SetPosition(l - 24, t);
 				}
@@ -705,6 +806,7 @@ void Simon::Idle()
 
 void Simon::Jump()
 {
+	if (isJump) return;
 	float l, t, r, b;
 	GetBoundingBox(l, t, r, b);
 	if (vy<0.1)

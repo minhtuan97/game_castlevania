@@ -1,4 +1,10 @@
 #include "Weapon.h"
+#include "Bat.h"
+#include "Grid.h"
+#include "Ghost.h"
+#include "Knight.h"
+#include "Monkey.h"
+#include "Zombie.h"
 
 Weapon::Weapon()
 {
@@ -8,6 +14,79 @@ Weapon::Weapon()
 
 void Weapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	for (int i = 0; i < coObjects->size(); i++)
+	{
+		if (dynamic_cast<Bat*>(coObjects->at(i)))
+		{
+			Bat* b = dynamic_cast<Bat*>(coObjects->at(i));
+
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			b->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(b);
+			}
+		}
+		if (dynamic_cast<Ghost*>(coObjects->at(i)))
+		{
+			Ghost* b = dynamic_cast<Ghost*>(coObjects->at(i));
+
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			b->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(b);
+			}
+		}
+		if (dynamic_cast<Knight*>(coObjects->at(i)))
+		{
+			Knight* b = dynamic_cast<Knight*>(coObjects->at(i));
+
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			b->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(b);
+			}
+		}
+		if (dynamic_cast<Monkey*>(coObjects->at(i)))
+		{
+			Monkey* b = dynamic_cast<Monkey*>(coObjects->at(i));
+
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			b->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(b);
+			}
+		}
+		if (dynamic_cast<Zombie*>(coObjects->at(i)))
+		{
+			Zombie* b = dynamic_cast<Zombie*>(coObjects->at(i));
+
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			b->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(b);
+			}
+		}
+	}
 }
 
 void Weapon::Render()

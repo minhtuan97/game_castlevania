@@ -126,6 +126,12 @@
     <ClCompile Include="Axe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BatBoss.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BrickJump.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -234,6 +240,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Axe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BatBoss.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BrickJump.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

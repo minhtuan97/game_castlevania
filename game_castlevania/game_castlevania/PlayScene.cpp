@@ -19,6 +19,8 @@
 #include "Monkey.h"
 #include "White.h"
 #include "Zombie.h"
+#include "BatBoss.h"
+#include "BrickJump.h"
 
 using namespace std;
 
@@ -292,6 +294,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		White* white;
 		white = NULL;
 		white = (White*)obj;
+		obj->nx = atof(tokens[5].c_str());
 		white->xde = x;
 		white->yde = y;
 		break;
@@ -304,7 +307,15 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		zombie->y_de = y;
 		break;
 	case 17:
-
+		obj = new BatBoss();
+		BatBoss* boss;
+		boss = NULL;
+		boss= (BatBoss*)obj;
+		break;
+	case 18:
+		obj = new BrickJump();
+		obj->nx= atof(tokens[5].c_str());
+		DebugOut(L"[INFO] Brick object created!\n");
 		break;
 	case OBJECT_TYPE_PORTAL:
 	{

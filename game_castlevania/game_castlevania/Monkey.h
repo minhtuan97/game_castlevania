@@ -8,10 +8,10 @@
 #define	MONKEY_STATE_WALK		1
 #define	MONKEY_STATE_JUMP		2
 
-#define MONKEY_JUMP_SPEED_X		0.14f
+#define MONKEY_JUMP_SPEED_X		0.08f
 #define MONKEY_JUMP_SPEED_Y		0.15f
 
-#define MONKEY_WALK_SPEED_X		0.2f
+#define MONKEY_WALK_SPEED_X		0.08f
 #define MONKEY_WALK_SPEED_Y		0.12f
 
 #define MONKEY_GRAVITY_SPEED	0.0012f
@@ -25,6 +25,7 @@ class Monkey: public GameObject
 	bool isDisableJump = false;
 	bool isHitted = false;
 	bool isHide = false;
+	float denta;
 
 public:
 	float xde, yde;

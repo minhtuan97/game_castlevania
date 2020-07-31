@@ -1,6 +1,11 @@
 #include "Whip.h"
 #include "Candle.h"
 #include "Grid.h"
+#include "Knight.h"
+#include "Zombie.h"
+#include "Ghost.h"
+#include "Bat.h"
+#include "White.h"
 
 
 void Whip::Render()
@@ -39,6 +44,49 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					//DebugOut(L"Co va cham voi lua tai vi tri x:%f,y%f\n",torch->x,torch->y);
 
 				}
+				else
+					if (dynamic_cast<Knight*>(colliable_objects->at(i)))
+					{
+						Knight* knight = dynamic_cast<Knight*>(colliable_objects->at(i));
+
+						Grid* grid = Grid::GetInstance();
+						grid->deleteObject(knight);
+					}
+			if (dynamic_cast<Zombie*>(colliable_objects->at(i)))
+			{
+				Zombie* zom = dynamic_cast<Zombie*>(colliable_objects->at(i));
+
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(zom);
+			}
+			if (dynamic_cast<Ghost*>(colliable_objects->at(i)))
+			{
+				Ghost* g = dynamic_cast<Ghost*>(colliable_objects->at(i));
+
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(g);
+			}
+			if (dynamic_cast<Bat*>(colliable_objects->at(i)))
+			{
+				Bat* zom = dynamic_cast<Bat*>(colliable_objects->at(i));
+
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(zom);
+			}
+			if (dynamic_cast<Zombie*>(colliable_objects->at(i)))
+			{
+				Zombie* zom = dynamic_cast<Zombie*>(colliable_objects->at(i));
+
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(zom);
+			}
+			if (dynamic_cast<White*>(colliable_objects->at(i)))
+			{
+				White* zom = dynamic_cast<White*>(colliable_objects->at(i));
+
+				Grid* grid = Grid::GetInstance();
+				grid->deleteObject(zom);
+			}
 		}
 
 	}
@@ -70,6 +118,6 @@ void Whip::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
 	l = x;
 	t = y;
-	r = x + 24;
+	r = x + 26;
 	b = y + 16;
 }
