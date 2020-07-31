@@ -8,7 +8,7 @@
 #define SIMON_JUMP_SPEED_Y		0.5f
 #define SIMON_JUMP_DEFLECT_SPEED 0.2f
 #define SIMON_GRAVITY			0.003f
-#define SIMON_DIE_DEFLECT_SPEED	 0.5f
+#define SIMON_DIE_DEFLECT_SPEED	 0.05f
 
 #define SIMON_STATE_IDLE_LEFT		0
 #define SIMON_STATE_IDLE_RIGHT		1
@@ -109,6 +109,7 @@ public:
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
 	void Idle();
 	void Jump();
+	void Death();
 	void Standing();
 	void Color();
 	void Reset();

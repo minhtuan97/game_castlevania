@@ -650,7 +650,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_Z:
 		if (!simon->isAttact)
-			if (game->IsKeyDown(DIK_UP))
+			if (game->IsKeyDown(DIK_UP)&&!simon->isOnStair)
 				simon->attackWeapon();
 		simon->Standing();
 		break;
@@ -666,11 +666,11 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	Simon* simon = ((CPlayScene*)scence)->GetPlayer2();
 	// disable control key when Mario die 
 	//if (mario->GetState() == MARIO_STATE_DIE) return;
-	if (game->IsKeyDown(DIK_RIGHT))
+	if (game->IsKeyDown(DIK_RIGHT)&&!simon->isOnStair)
 	{
 		simon->SetState(SIMON_STATE_WALK_RIGHT);
 	}
-	else if (game->IsKeyDown(DIK_LEFT))
+	else if (game->IsKeyDown(DIK_LEFT)&&!simon->isOnStair)
 	{
 		simon->SetState(SIMON_STATE_WALK_LEFT);
 	}

@@ -174,6 +174,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				StartUntouchable();
 				Grid* grid = Grid::GetInstance();
 				grid->deleteObject(knight);
+				Death();
 			}
 		}
 		if (dynamic_cast<Bat*>(colliable_objects->at(i)))
@@ -188,6 +189,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				StartUntouchable();
 				Grid* grid = Grid::GetInstance();
 				grid->deleteObject(bat);
+				Death();
 			}
 		}
 		if (dynamic_cast<Portal*>(colliable_objects->at(i)))
@@ -213,6 +215,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
 			{
 				StartUntouchable();
+				Death();
 			}
 		}
 		if (dynamic_cast<Zombie*>(colliable_objects->at(i)))
@@ -225,6 +228,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
 			{
 				StartUntouchable();
+				Death();
 				Grid* grid = Grid::GetInstance();
 				grid->deleteObject(z);
 			}
@@ -238,6 +242,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
 			{
+				Death();
 				StartUntouchable();
 			}
 		}
@@ -250,6 +255,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
 			{
+				Death();
 				StartUntouchable();
 			}
 		}
@@ -262,6 +268,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
 			{
+				Death();
 				StartUntouchable();
 			}
 		}
@@ -274,6 +281,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
 			{
+				Death();
 				StartUntouchable();
 			}
 		}
@@ -761,10 +769,16 @@ void Simon::SetState(int state)
 		nx = 1;
 		break;
 	case SIMON_STATE_DEATH_LEFT:
-		vx = -SIMON_DIE_DEFLECT_SPEED;
+		vy = -SIMON_DIE_DEFLECT_SPEED;
+		vx = -SIMON_WALKING_SPEED;
+		nx = -1;
+		isJump = true;
 		break;
 	case SIMON_STATE_DEATH_RIGHT:
-		vx = SIMON_DIE_DEFLECT_SPEED;
+		vy = -SIMON_DIE_DEFLECT_SPEED;
+		vx = SIMON_WALKING_SPEED;
+		nx = 1;
+		isJump = true;
 		break;
 	case SIMON_STATE_INTRO:
 		vx = 0;
@@ -807,6 +821,7 @@ void Simon::Idle()
 void Simon::Jump()
 {
 	if (isJump) return;
+	if (isOnStair) return;
 	float l, t, r, b;
 	GetBoundingBox(l, t, r, b);
 	if (vy<0.1)
@@ -815,6 +830,20 @@ void Simon::Jump()
 			SetState(SIMON_STATE_JUMP_RIGHT);
 		else
 			SetState(SIMON_STATE_JUMP_LEFT);
+	}
+}
+
+void Simon::Death()
+{
+	if (isJump) return;
+	float l, t, r, b;
+	GetBoundingBox(l, t, r, b);
+	if (vy < 0.1)
+	{
+		if (nx > 0)
+			SetState(SIMON_STATE_DEATH_RIGHT);
+		else
+			SetState(SIMON_STATE_DEATH_LEFT);
 	}
 }
 

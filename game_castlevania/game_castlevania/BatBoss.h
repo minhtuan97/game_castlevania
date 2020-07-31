@@ -27,6 +27,7 @@ private:
 	bool isGoUp = false; 
 	bool isGoDown = false;
 	bool isResetPositionParabol = false;
+	int heart;
 	float autoGoX_Distance = 0.0f, autoGoY_Distance = 0.0f;
 	float a, b;
 	DWORD timeBeginState = 0;
@@ -40,6 +41,7 @@ public:
 	float float_randomX(float min, float max);
 	void SetState(int state);
 	void beAttack();
+	void SubHeart();
 	~BatBoss();
 };
 

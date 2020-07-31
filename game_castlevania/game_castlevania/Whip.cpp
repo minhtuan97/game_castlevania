@@ -6,6 +6,7 @@
 #include "Ghost.h"
 #include "Bat.h"
 #include "White.h"
+#include "BatBoss.h"
 
 
 void Whip::Render()
@@ -86,6 +87,11 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 				Grid* grid = Grid::GetInstance();
 				grid->deleteObject(zom);
+			}
+			if (dynamic_cast<BatBoss*>(colliable_objects->at(i)))
+			{
+				BatBoss* b = dynamic_cast<BatBoss*>(colliable_objects->at(i));
+				b->SubHeart();
 			}
 		}
 

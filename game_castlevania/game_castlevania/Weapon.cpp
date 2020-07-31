@@ -5,6 +5,8 @@
 #include "Knight.h"
 #include "Monkey.h"
 #include "Zombie.h"
+#include "BatBoss.h"
+#include "Candle.h"
 
 Weapon::Weapon()
 {
@@ -85,6 +87,25 @@ void Weapon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				Grid* grid = Grid::GetInstance();
 				grid->deleteObject(b);
 			}
+		}
+		if (dynamic_cast<BatBoss*>(coObjects->at(i)))
+		{
+			BatBoss* b = dynamic_cast<BatBoss*>(coObjects->at(i));
+
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			b->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				b->SubHeart();
+			}
+		}
+		if (dynamic_cast<Candle*>(coObjects->at(i)))
+		{
+			Candle* candle = dynamic_cast<Candle*>(coObjects->at(i));
+			candle->SetColi(true);
+
 		}
 	}
 }

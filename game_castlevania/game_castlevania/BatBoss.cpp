@@ -1,6 +1,7 @@
 #include "BatBoss.h"
 #include "define.h"
 #include "Camera.h"
+#include "Grid.h"
 
 BatBoss::BatBoss()
 {
@@ -10,11 +11,15 @@ BatBoss::BatBoss()
 	yLine2 = 72;
 	xminLine2 = 577;
 	xmaxLine2 = 720;
+	heart = 50;
 }
 
 void BatBoss::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	simon = Simon::GetInstance();
+	Grid* grid = Grid::GetInstance();
+	if (heart <= 0)
+		grid->deleteObject(this);
 
 	float xmin = 690;
 	float xmax = 768;
@@ -178,6 +183,11 @@ void BatBoss::SetState(int state)
 
 void BatBoss::beAttack()
 {
+}
+
+void BatBoss::SubHeart()
+{
+	heart--;
 }
 
 BatBoss::~BatBoss()
