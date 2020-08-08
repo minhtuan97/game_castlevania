@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Simon.h"
+#include "Skeleton.h"
 
 #define WHITE_WALKING_SPEED		0.08f 
 #define WHITE_JUMP_SPEED_Y		0.5f
@@ -27,14 +28,17 @@ class White:public GameObject
 	float denta;
 	float x_backup;
 	float y_backup;
+	vector<Skeleton*> list_Skeleton;
 	
 public:
 	float xde, yde;
 	White();
+	White(int nx);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void SetState(int state);
+	int random(int min, int max);
 	~White();
 };
 

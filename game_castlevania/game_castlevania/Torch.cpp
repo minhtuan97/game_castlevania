@@ -18,7 +18,7 @@ void Torch::Update(DWORD dt, vector<LPGAMEOBJECT>* listItem)
 
 void Torch::Render()
 {
-		animation_set->at(0)->Render(x, y);
+		animation_set->at(0)->Render(x, y + BOARD_HEIGHT);
 		//RenderBoundingBox();
 }
 

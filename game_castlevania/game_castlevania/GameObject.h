@@ -7,6 +7,7 @@
 #include "Animations.h"
 #include "Textures.h"
 #include <algorithm>
+#include "define.h"
 
 using namespace std;
 

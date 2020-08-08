@@ -28,7 +28,7 @@ WARNING: This example contains a hell LOT of *sinful* programming practices
 #define WINDOW_CLASS_NAME L"SampleWindow"
 #define MAIN_WINDOW_TITLE L"04 - Collision"
 
-#define BACKGROUND_COLOR D3DCOLOR_XRGB(0, 40, 100)
+#define BACKGROUND_COLOR D3DCOLOR_XRGB(255, 255, 255)
 //#define SCREEN_WIDTH 300
 //#define SCREEN_HEIGHT 250
 

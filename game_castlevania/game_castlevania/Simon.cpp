@@ -35,7 +35,7 @@ Simon::Simon(float x, float y)
 	this->y = y;
 	isOnStair = false;
 	listWeapon.clear();
-	
+	HeartCollect = 0;
 
 }
 
@@ -66,13 +66,13 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		{
 			if (isUpStair)
 			{
-				vx = 0.02f;
-				vy = -0.02f;
+				vx = 0.03f;
+				vy = -0.03f;
 			}
 			else if(isDownStair)
 			{
-				vx = -0.02f;
-				vy = 0.02f;
+				vx = -0.03f;
+				vy = 0.03f;
 			}
 		}
 		else
@@ -192,7 +192,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 				Death();
 			}
 		}
-		if (dynamic_cast<Portal*>(colliable_objects->at(i)))
+		if (dynamic_cast<Portal*>(colliable_objects->at(i)) && !isJump)
 		{
 			Portal* p = dynamic_cast<Portal*>(colliable_objects->at(i));
 			float l1, t1, r1, b1, l2, t2, r2, b2;
@@ -282,6 +282,19 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
 			{
 				Death();
+				StartUntouchable();
+			}
+		}
+		if (dynamic_cast<Skeleton*>(colliable_objects->at(i)))
+		{
+			Skeleton* m = dynamic_cast<Skeleton*>(colliable_objects->at(i));
+			float l1, t1, r1, b1, l2, t2, r2, b2;
+			GetBoundingBox(l1, t1, r1, b1);
+			m->GetBoundingBox(l2, t2, r2, b2);
+
+			if (Game::AABB(l1, t1, r1, b1, l2, t2, r2, b2))
+			{
+				//Death();
 				StartUntouchable();
 			}
 		}
@@ -392,10 +405,10 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 			if (ny != 0)
 			{
 				vy = 0;
-				isJump = false;
+				//isJump = false;
 			}
-			/*else
-				isJump = true;*/
+			//else
+				//isJump = true;
 
 			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
@@ -441,7 +454,10 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 						loopani = 0;
 						Color();
 					}
-
+					if (item->GetTypeItem() == HEART||item->GetTypeItem()== HEARTSMALL)
+					{
+						HeartCollect++;
+					}
 					Grid* grid = Grid::GetInstance();
 					grid->deleteObject(e->obj);
 
@@ -462,7 +478,7 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					}
 				}
 				
-				if (dynamic_cast<Portal*>(e->obj))
+				if (dynamic_cast<Portal*>(e->obj)&&!isJump)
 				{
 					Portal* p = dynamic_cast<Portal*>(e->obj);
 					Game::GetInstance()->SwitchScene(p->GetSceneId());
@@ -698,9 +714,9 @@ void Simon::Render()
 		
 		//DebugOut(L"Xuat isStanding: %d curentframe: %d\n", isStanding, animation_set->at(ani)->GetcurrenFrame());
 		if (ani == SIMON_ANI_ASCEND_WHIP_RIGHT && animation_set->at(ani)->GetcurrenFrame() == 0)
-			animation_set->at(ani)->Render(x - 8, y, alpha);
+			animation_set->at(ani)->Render(x - 8, y + BOARD_HEIGHT, alpha);
 		else
-			animation_set->at(ani)->Render(x, y, alpha);
+			animation_set->at(ani)->Render(x, y + BOARD_HEIGHT, alpha);
 		
 		for (int i = 0; i < listWeapon.size(); i++)
 			listWeapon.at(i)->Render();
@@ -840,10 +856,10 @@ void Simon::Death()
 	GetBoundingBox(l, t, r, b);
 	if (vy < 0.1)
 	{
-		if (nx > 0)
+		/*if (nx > 0)
 			SetState(SIMON_STATE_DEATH_RIGHT);
 		else
-			SetState(SIMON_STATE_DEATH_LEFT);
+			SetState(SIMON_STATE_DEATH_LEFT);*/
 	}
 }
 
@@ -892,6 +908,7 @@ void Simon::StairDown()
 	isUpStair = false;
 	isDownStair = true;
 	isIdleOnStair = false;
+	isJump = false;
 	if (distanceX == 0 && distanceY == 0)
 	{
 		distanceX = distanceY = 8;
@@ -910,6 +927,7 @@ void Simon::StairUp()
 	isUpStair = true;
 	isDownStair = false;
 	isIdleOnStair = false;
+	isJump = false;
 	if (distanceX == 0 && distanceY == 0)
 	{
 		distanceX = distanceY = 8;

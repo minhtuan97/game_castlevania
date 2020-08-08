@@ -1,8 +1,10 @@
 #pragma once
 #define SCREEN_WIDTH 272
-#define SCREEN_HEIGHT 250
+#define SCREEN_HEIGHT 270
+
 
 #define	HEART	0
+#define	HEARTSMALL	4
 #define	WHIP	1
 #define	DAGGER	2
 #define	MONEYBAG	3
@@ -47,3 +49,12 @@
 
 
 #define WATERFIRE_ATTACK_TIME	1500
+
+#define ANIMATIONSET_SKELETON	16
+#define WHITE_BBOX_WIDTH	16
+#define WHITE_BBOX_HEIGHT	32
+
+#define ANIMATIONSET_BOARD	45
+#define BOARD_HEIGHT	42
+
+#define ANIMATIONSET_NUMBER	46

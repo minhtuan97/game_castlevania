@@ -18,7 +18,7 @@ void Candle::Update(DWORD dt, vector<LPGAMEOBJECT>* listItem)
 
 void Candle::Render()
 {
-	animation_set->at(0)->Render(x, y);
+	animation_set->at(0)->Render(x, y + BOARD_HEIGHT);
 	//RenderBoundingBox();
 }
 

@@ -19,7 +19,7 @@ void Brickmove::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void Brickmove::Render()
 {
-	animation_set->at(0)->Render(x, y);
+	animation_set->at(0)->Render(x, y + BOARD_HEIGHT);
 	//RenderBoundingBox();
 }
 

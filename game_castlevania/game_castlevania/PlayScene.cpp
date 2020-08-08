@@ -21,6 +21,7 @@
 #include "Zombie.h"
 #include "BatBoss.h"
 #include "BrickJump.h"
+#include "Skeleton.h"
 
 using namespace std;
 
@@ -30,6 +31,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 	key_handler = new CPlayScenceKeyHandler(this);
 	//map = Map::GetInstance();
 	camera = Camera::GetInstance();
+	
 }
 
 /*
@@ -290,11 +292,11 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		monkey->yde = y;
 		break;
 	case 15:
-		obj = new White();
+		
+		obj = new White(atof(tokens[5].c_str()));
 		White* white;
 		white = NULL;
 		white = (White*)obj;
-		obj->nx = atof(tokens[5].c_str());
 		white->xde = x;
 		white->yde = y;
 		break;
@@ -317,6 +319,10 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj->nx= atof(tokens[5].c_str());
 		DebugOut(L"[INFO] Brick object created!\n");
 		break;
+	//case 19:
+	//	obj = new Skeleton();
+	//	DebugOut(L"[INFO] Brick object created!\n");
+	//	break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[5].c_str());
@@ -418,7 +424,7 @@ void CPlayScene::Load()
 	f.close();
 
 	Textures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
-
+	board = new Board();
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
 
@@ -491,10 +497,16 @@ void CPlayScene::Update(DWORD dt)
 
 	for (size_t i = 0; i < coObjects.size(); i++)
 	{
-		if (dynamic_cast<Ghost*>(coObjects[i]))
+		if (dynamic_cast<Ghost*>(coObjects[i]) && coObjects[i] != NULL)
 		{
 			Ghost* g = dynamic_cast<Ghost*>(coObjects[i]);
 			if (!g->isHide)
+				coObjects.erase(std::remove(coObjects.begin(), coObjects.end(), g), coObjects.end());
+		}
+		if (dynamic_cast<Skeleton*>(coObjects[i])&& coObjects[i]!=NULL)
+		{
+			Skeleton* g = dynamic_cast<Skeleton*>(coObjects[i]);
+			if (!g->isattack)
 				coObjects.erase(std::remove(coObjects.begin(), coObjects.end(), g), coObjects.end());
 		}
 	}
@@ -595,7 +607,7 @@ void CPlayScene::Render()
 		if(dynamic_cast<Whip*>(objects[i]) == false)
 			objects[i]->Render();
 	}
-
+	board->Render(player2, 0, 0, NULL);
 }
 
 /*

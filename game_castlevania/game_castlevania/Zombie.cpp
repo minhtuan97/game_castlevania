@@ -106,7 +106,7 @@ void Zombie::Render()
 	int ani = 0;
 	if (nx_zombie > 0)
 		ani = 1;
-	animation_set->at(ani)->Render(x, y);
+	animation_set->at(ani)->Render(x, y + BOARD_HEIGHT);
 	//RenderBoundingBox();
 }
 

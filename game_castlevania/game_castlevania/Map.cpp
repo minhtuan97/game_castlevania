@@ -56,8 +56,8 @@ void Map::DrawMap()
 		{
 			
 			a = TileMap[i][j];
-			if(a>=0)
-				sprites->Get(50000 + a)->Draw(j * widthTile, i * heightTile);
+			if (a >= 0)
+				sprites->Get(50000 + a)->Draw(j * widthTile, i * heightTile + BOARD_HEIGHT);
 			//if (a == 55)DebugOut(L"%d	%d\n", j * widthTile, i * heightTile);
 		}
 	//DebugOut(L"bhet\n");

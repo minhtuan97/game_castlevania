@@ -109,7 +109,7 @@ void HolyWater::Render()
 {
 	if (!isAttack) return;
 
-	animation_set->at(state)->Render(x, y);
+	animation_set->at(state)->Render(x, y + BOARD_HEIGHT);
 	//RenderBoundingBox();
 }
 

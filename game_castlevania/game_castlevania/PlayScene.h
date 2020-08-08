@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Grid.h"
 #include "Item.h"
+#include "Board.h"
 
 class CPlayScene : public CScene
 {
@@ -22,6 +23,7 @@ protected:
 	Camera* camera;
 	Whip* whip;
 	vector<LPGAMEOBJECT> objects;
+	Board* board;
 	
 	vector<LPGAMEOBJECT> objects_item;
 	float xLeftCreateGhost, xRightCreateGhost;

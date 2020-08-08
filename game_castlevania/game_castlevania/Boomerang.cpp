@@ -110,7 +110,7 @@ void Boomerang::Render()
 {
 	if (!isAttack) return;
 
-	animation_set->at(0)->Render(x, y);
+	animation_set->at(0)->Render(x, y + BOARD_HEIGHT);
 	//RenderBoundingBox();
 }
 

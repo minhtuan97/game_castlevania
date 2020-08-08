@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 #include "Whip.h"
 #include "Weapon.h"
@@ -88,7 +88,12 @@ class Simon: public GameObject
 	static Simon* __instance;
 	
 
+
 public:
+	int HeartCollect; // số lượng item heart người chơi nhặt được
+	int Lives; // số mạng của simon
+	int score; // điểm
+
 	bool isIdleOnStair;
 	bool isOnStair;
 	bool isUpStair;

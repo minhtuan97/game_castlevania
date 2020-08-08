@@ -31,7 +31,7 @@ void Knight::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 
 void Knight::Render()
 {
-	animation_set->at(state)->Render(x, y);
+	animation_set->at(state)->Render(x, y + BOARD_HEIGHT);
 	//RenderBoundingBox();
 }
 

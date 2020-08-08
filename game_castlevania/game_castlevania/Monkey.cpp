@@ -8,9 +8,9 @@
 
 Monkey::Monkey()
 {
-	SetState(MONKEY_STATE_IDLE);
 	nx = 1;
-	denta = 150;
+	SetState(MONKEY_STATE_IDLE);
+	denta = 100;
 }
 
 void Monkey::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -24,17 +24,27 @@ void Monkey::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	camX=cam->GetCameraPosition().x;
 	camY= cam->GetCameraPosition().y;
 	
-	if (abs(x - xsimon) > denta)
+	//if (abs(x - xsimon) > denta)
+	//{
+	//	vx = -vx;
+
+	//}
+	if (x - xsimon > denta)
 	{
-		vx = -vx;
+		nx = -1;
+
+	}
+	if (x - xsimon > -denta)
+	{
+		nx = 1;
 
 	}
 
 	//if (x < camX || x + MONKEY_BBOX_WIDTH > camX + SCREEN_WIDTH)
-	DebugOut(L"camX:%f, x:%f\n", camX, x);
+	//DebugOut(L"camX:%f, x:%f\n", camX, x);
 	if (camX!=0&&camX<x-50 && camX + SCREEN_WIDTH> x + MONKEY_BBOX_WIDTH)
 	{
-		DebugOut(L"vao setstate\n");
+		//DebugOut(L"vao setstate\n");
 
 		if(!isJump)
 			SetState(MONKEY_STATE_JUMP);
@@ -52,7 +62,7 @@ void Monkey::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vector<LPGAMEOBJECT> listObject_Brick;
 	listObject_Brick.clear();
 	for (UINT i = 0; i < coObjects->size(); i++)
-		if (dynamic_cast<Brick*>(coObjects->at(i)))
+		if (dynamic_cast<Brick*>(coObjects->at(i))&& (&coObjects->at(i)!=NULL))
 			listObject_Brick.push_back(coObjects->at(i));
 
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -67,7 +77,7 @@ void Monkey::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (coEvents.size() == 0)
 		{
 			y += dy;
-			x += dx * nx;
+			x += dx*nx;
 			//DebugOut(L"sau khi va cham vy=%f, dy:%f\n",vy, dy);
 
 		}
@@ -125,7 +135,7 @@ void Monkey::Render()
 		ani = 1;
 	if (state == MONKEY_STATE_JUMP)
 		ani = 3;
-	animation_set->at(ani)->Render(x, y);
+	animation_set->at(ani)->Render(x, y + BOARD_HEIGHT);
 	//RenderBoundingBox();
 }
 
@@ -148,12 +158,12 @@ void Monkey::SetState(int state)
 		isJump = false;
 		break;
 	case MONKEY_STATE_WALK:
-		vx = MONKEY_WALK_SPEED_X;
+		vx = MONKEY_WALK_SPEED_X*nx;
 		vy = -MONKEY_WALK_SPEED_Y;
 		isJump = true;
 		break;
 	case MONKEY_STATE_JUMP:
-		vx = MONKEY_JUMP_SPEED_X;
+		vx = MONKEY_JUMP_SPEED_X*nx;
 		vy = -MONKEY_JUMP_SPEED_Y;
 		isJump = true;
 		break;

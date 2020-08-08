@@ -102,9 +102,9 @@ void Ghost::Render()
 {
 	if (!isHide) return;
 	if (nx > 0)
-		animation_set->at(1)->Render(x, y);
+		animation_set->at(1)->Render(x, y + BOARD_HEIGHT);
 	else
-		animation_set->at(0)->Render(x, y);
+		animation_set->at(0)->Render(x, y + BOARD_HEIGHT);
 }
 
 void Ghost::GetBoundingBox(float& left, float& top, float& right, float& bottom)

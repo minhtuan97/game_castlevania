@@ -111,8 +111,8 @@ void BatBoss::Render()
 		ani = 0;
 	else
 		ani = 1;
-    animation_set->at(ani)->Render(x, y);
-	RenderBoundingBox();
+    animation_set->at(ani)->Render(x, y+BOARD_HEIGHT);
+	//RenderBoundingBox();
 }
 
 void BatBoss::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -141,7 +141,7 @@ float BatBoss::float_randomX(float min, float max)
 	srand(time(0));
 	int s = (int)(max - min + 1);
 	int res =  rand() % s + min;
-	DebugOut(L"res=%d\n", res);
+	//DebugOut(L"res=%d\n", res);
 
 	return res;
 }

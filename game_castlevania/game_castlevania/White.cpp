@@ -10,12 +10,18 @@
 
 White::White()
 {
+	
+
+}
+
+White::White(int n)
+{
+	this->nx = n;
 	if (nx > 0)
 		SetState(WHITE_STATE_WALK_RIGHT);
 	else
 		SetState(WHITE_STATE_WALK_LEFT);
 	denta = 32;
-
 }
 
 void White::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -24,16 +30,20 @@ void White::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	simon = Simon::GetInstance();
 	cam = Camera::GetInstance();
+	Map* map = Map::GetInstance();
+	Grid* grid = Grid::GetInstance();
 	float xsimon, ysimon;
 	simon->GetPosition(xsimon, ysimon);
 	if (isJump)
 	{
-
+		//isGo = false;
+		//isBack = false;
+		//vx = WHITE_WALKING_SPEED;
 	}
 	else
 	{
-		if (isGo) vx = WHITE_WALKING_SPEED;
-		if (isBack) vx = -WHITE_WALKING_SPEED;
+		if (isGo) vx = WHITE_WALKING_SPEED*nx;
+		if (isBack) vx = -WHITE_WALKING_SPEED*nx;
 	}
 
 	// Calculate dx, dy
@@ -53,46 +63,31 @@ void White::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	for (int i = 0; i < coObjects->size(); i++)
 	{
 		if (!(dynamic_cast<Item*>(coObjects->at(i)))
-			|| !(dynamic_cast<Candle*>(coObjects->at(i)))
-			|| !(dynamic_cast<StairTop*>(coObjects->at(i)))
-			|| !(dynamic_cast<StairBot*>(coObjects->at(i))))
+			&& !(dynamic_cast<Candle*>(coObjects->at(i)))
+			&& !(dynamic_cast<StairTop*>(coObjects->at(i)))
+			&& !(dynamic_cast<StairBot*>(coObjects->at(i))))
 		{
 			list.push_back(coObjects->at(i));
 		}
 	}
 
-	if (abs(x - xsimon) > denta)
+	if (!isJump)
 	{
-		isGo = true;
-		isBack = false;
-		//SetState(WHITE_STATE_WALK_RIGHT);
-	}
-	else
-	{
-		isGo = false;
-		isBack = true;
-		isJump = false;
-		//SetState(WHITE_STATE_WALK_LEFT);
+		if (abs(x - xsimon) > denta)
+		{
+			isGo = true;
+			isBack = false;
+		}
+		else
+		{
+			isGo = false;
+			isBack = true;
+			isJump = false;
 
+		}
 	}
-	if (isBack && isJump)
-	{
-		x = x - denta;
-		isJump = false;
-	}
-	// turn off collision when die 
-	//if (state != MARIO_STATE_DIE)
+
 		CalcPotentialCollisions(&list, coEvents);
-
-	// reset untouchable timer if untouchable time has passed
-	/*if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
-	{
-		untouchable_start = 0;
-		untouchable = 0;
-	}*/
-
-
-	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
 	{
 		x += dx;
@@ -160,40 +155,61 @@ void White::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (abs(x - xsimon) < denta)
 					isJump = false;
 			}
-			/*if (dynamic_cast<Brick*>(e->obj))
+			if (dynamic_cast<Brick*>(e->obj))
 			{
-				if (state == WHITE_STATE_JUMP_RIGHT)
-					SetState(WHITE_STATE_WALK_RIGHT);
-			}*/
-			//	else if (e->nx != 0)
-			//	{
-			//		if (untouchable == 0)
-			//		{
-			//			if (goomba->GetState() != GOOMBA_STATE_DIE)
-			//			{
-			//				if (level > MARIO_LEVEL_SMALL)
-			//				{
-			//					level = MARIO_LEVEL_SMALL;
-			//					StartUntouchable();
-			//				}
-			//				else
-			//					SetState(MARIO_STATE_DIE);
-			//			}
-			//		}
-			//	}
-			//}
+				isJump = false;
+			}
+
 		}
 	}
 
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 	//DebugOut(L"vx=%f, nx%f", vx, nx);
-	Map* map = Map::GetInstance();
-	Grid* grid = Grid::GetInstance();
+	
+	//khoi tao Skeleton
+
+	if (list_Skeleton.empty())
+	{
+		
+		int n = random(1,2);
+		for (int i = 0; i < n; i++)
+		{
+			Skeleton* s = new Skeleton(this->nx);
+			s->SetPosition(x+ WHITE_BBOX_WIDTH, y);
+			if(i==1)
+				s->SetPosition(x + WHITE_BBOX_WIDTH, y-WHITE_BBOX_HEIGHT/2);
+
+			list_Skeleton.push_back(s);
+			grid->addObject(s);
+		}
+		DebugOut(L"n=%d\n",n);
+	}
+	else
+	{
+		for (int i = 0; i < list_Skeleton.size(); i++)
+		{
+			
+			if (!list_Skeleton.at(i)->isattack)
+			{
+				Skeleton* s = list_Skeleton.at(i);
+				//grid->deleteObject(list_Skeleton.at(i));
+				list_Skeleton.erase(std::remove(list_Skeleton.begin(), list_Skeleton.end(), s), list_Skeleton.end());
+				//list_Skeleton.erase(list_Skeleton.begin() + i);
+				i--;
+				//delete s;
+				//s = NULL;
+			}
+
+		}
+
+	}
+
 	if (x > map->GetWidth() - 10 || y < 1 || x<1 || y>map->GetHeight())
 		grid->deleteObject(this);
 	else
 		grid->Update(this);
+	
 }
 
 void White::Render()
@@ -223,17 +239,19 @@ void White::Render()
 	
 	//DebugOut(L"animationset=%d", ani);
 
-	animation_set->at(ani)->Render(x, y);
+	animation_set->at(ani)->Render(x, y + BOARD_HEIGHT);
 
 	//RenderBoundingBox();
+	//for (int i = 0; i < list_Skeleton.size(); i++)
+		//list_Skeleton.at(i)->Render();
 }
 
 void White::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
 	top = y;
-	right = x + 16;
-	bottom = y + 32;
+	right = x + WHITE_BBOX_WIDTH;
+	bottom = y + WHITE_BBOX_HEIGHT;
 }
 
 void White::SetState(int state)
@@ -269,6 +287,14 @@ void White::SetState(int state)
 		break;
 
 	}
+}
+
+int White::random(int min, int max)
+{
+	srand(time(0));
+	int s = (int)(max - min + 1);
+	int res = rand() % s + min;
+	return res;
 }
 
 White::~White()

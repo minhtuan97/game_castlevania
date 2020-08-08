@@ -146,6 +146,7 @@
     <ClCompile Include="Axe.cpp" />
     <ClCompile Include="Bat.cpp" />
     <ClCompile Include="BatBoss.cpp" />
+    <ClCompile Include="Board.cpp" />
     <ClCompile Include="Boomerang.cpp" />
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="BrickJump.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Candle.cpp" />
     <ClCompile Include="Cell.cpp" />
+    <ClCompile Include="CNumber.cpp" />
     <ClCompile Include="define.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -169,6 +171,7 @@
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="Scence.cpp" />
     <ClCompile Include="Simon.cpp" />
+    <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="StairBot.cpp" />
@@ -191,9 +194,11 @@
     <ClInclude Include="Brick.h" />
     <ClInclude Include="BrickJump.h" />
     <ClInclude Include="Brickmove.h" />
+    <ClInclude Include="Board.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Candle.h" />
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="CNumber.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
@@ -209,6 +214,7 @@
     <ClInclude Include="Portal.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Simon.h" />
+    <ClInclude Include="Skeleton.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="StairBot.h" />
